@@ -19,7 +19,7 @@ Url:            https://dolphin-emu.org/
 #dolphin-5.0/Source/Core/AudioCommon/aldlist.cpp
 ##Any code in Externals has a license break down in Externals/licenses.md
 License:        GPLv2+ and BSD and MIT and zlib
-Source0:        https://github.com/%{name}/dolphin/archive/%{version}.tar.gz#\%{name}-%{version}.tar.gz
+Source0:        https://github.com/%{name}/dolphin/archive/%{version}.tar.gz
 #GTK3 patch, upstream doesn't care for gtk3
 Patch0:         %{name}-%{version}-gtk3.patch
 #Missing include for mbedtls 2.3+, fixed upstream:
