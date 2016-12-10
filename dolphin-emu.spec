@@ -2,7 +2,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -174,6 +174,9 @@ fi
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %changelog
+* Fri Dec 9 2016 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-7
+- Add appdata
+
 * Tue Dec 6 2016 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-6
 - License fixes with added breakdown
 - Split out common data into data subpackage
