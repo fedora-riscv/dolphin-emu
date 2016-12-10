@@ -20,6 +20,7 @@ Url:            https://dolphin-emu.org/
 ##Any code in Externals has a license break down in Externals/licenses.md
 License:        GPLv2+ and BSD and MIT and zlib
 Source0:        https://github.com/%{name}/dolphin/archive/%{version}.tar.gz
+Source1:        %{name}.appdata.xml
 #GTK3 patch, upstream doesn't care for gtk3
 Patch0:         %{name}-%{version}-gtk3.patch
 #Missing include for mbedtls 2.3+, fixed upstream:
@@ -56,6 +57,7 @@ BuildRequires:  zlib-devel
 
 BuildRequires:  gettext
 BuildRequires:  desktop-file-utils
+BuildRequires:  libappstream-glib
 
 #Only the following architectures are supported:
 ExclusiveArch:  x86_64 armv7l aarch64
@@ -125,6 +127,11 @@ ln -s %{_includedir}/bochs/disasm/* ./
 %install
 %make_install
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
+#Install appdata.xml and verify
+install -p -D -m 0644 %{SOURCE1} \
+  %{buildroot}/%{_datadir}/appdata/%{name}.appdata.xml
+appstream-util validate-relax --nonet \
+  %{buildroot}/%{_datadir}/appdata/*.appdata.xml
 %find_lang %{name}
 
 %files -f %{name}.lang
@@ -136,6 +143,7 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
 %{_datadir}/%{name}/sys/Resources/
 %{_datadir}/%{name}/sys/Themes/
+%{_datadir}/appdata/*.appdata.xml
 
 %files nogui
 %doc Readme.md
