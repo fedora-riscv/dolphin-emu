@@ -107,7 +107,7 @@ sed 's| this directory | %{name}/Sys/GC |g' \
 
 #Patch for fedora 26+
 #https://github.com/dolphin-emu/dolphin/pull/4496
-sed -i 's/CHAR_WIDTH/char_width/g' Source/Core/VideoBackends/OGL/RasterFont.cpp
+sed -i 's/CHAR_/CHARACTER_/g' Source/Core/VideoBackends/OGL/RasterFont.cpp
 
 ###Remove Bundled Libraries except xxhash, mentioned above:
 cd Externals
