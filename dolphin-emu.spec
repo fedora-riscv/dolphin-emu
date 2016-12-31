@@ -58,6 +58,7 @@ BuildRequires:  zlib-devel
 BuildRequires:  gettext
 BuildRequires:  desktop-file-utils
 BuildRequires:  libappstream-glib
+BuildRequires:  hicolor-icon-theme
 
 #Only the following architectures are supported:
 ExclusiveArch:  x86_64 armv7l aarch64
