@@ -2,7 +2,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -102,6 +102,10 @@ This package provides the data files for dolphin-emu.
 #Allow building with cmake macro
 sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 
+#Workaround for Wayland
+#Force xwayland for now, I will be working on a patch for upstream later
+sed -i 's/Exec=dol/Exec=env GDK_BACKEND=x11 dol/g' Data/dolphin-emu.desktop
+
 #Font license, just making things more generic
 sed 's| this directory | %{name}/Sys/GC |g' \
     Data/Sys/GC/font-licenses.txt > font-licenses.txt
@@ -175,6 +179,9 @@ fi
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %changelog
+* Tue Jan 3 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-9
+- Workaround for wayland (force x11 for GUI)
+
 * Thu Dec 22 2016 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-8
 - Appdata fixes
 
