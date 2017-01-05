@@ -2,7 +2,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -102,9 +102,9 @@ This package provides the data files for dolphin-emu.
 #Allow building with cmake macro
 sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 
-#Workaround for Wayland
-#Force xwayland for now, I will be working on a patch for upstream later
-sed -i 's/Exec=dol/Exec=env GDK_BACKEND=x11 dol/g' Data/dolphin-emu.desktop
+#Generate launch scripts for seemless xwayland support
+echo -e "#!/bin/sh\nGDK_BACKEND=x11 %name-x11 \$@\n" > %{name}.sh
+echo -e "#!/bin/sh\nGDK_BACKEND=x11 %name-nogui-x11 \$@\n" > %{name}-nogui.sh
 
 #Font license, just making things more generic
 sed 's| this directory | %{name}/Sys/GC |g' \
@@ -125,24 +125,35 @@ ln -s %{_includedir}/bochs/disasm/* ./
 
 %build
 %cmake . \
+       -DENABLE_LTO='TRUE' \
        -DUSE_SHARED_ENET=TRUE \
        -DUSE_SHARED_GTEST=TRUE
 %make_build
 
 %install
 %make_install
-desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
-#Install appdata.xml and verify
+#Move binaries and install launch scripts
+mv -f %{buildroot}/%{_bindir}/%{name} \
+  %{buildroot}/%{_bindir}/%{name}-x11
+mv -f %{buildroot}/%{_bindir}/%{name}-nogui \
+  %{buildroot}/%{_bindir}/%{name}-nogui-x11
+install -p -D -m 0755 %{name}.sh %{buildroot}/%{_bindir}/%{name}
+install -p -D -m 0755 %{name}-nogui.sh %{buildroot}/%{_bindir}/%{name}-nogui
+#Install appdata.xml
 install -p -D -m 0644 %{SOURCE1} \
   %{buildroot}/%{_datadir}/appdata/%{name}.appdata.xml
+%find_lang %{name}
+
+%check
+desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
 appstream-util validate-relax --nonet \
   %{buildroot}/%{_datadir}/appdata/*.appdata.xml
-%find_lang %{name}
 
 %files -f %{name}.lang
 %doc Readme.md
 %license license.txt
 %{_bindir}/%{name}
+%{_bindir}/%{name}-x11
 %{_mandir}/man6/%{name}.*
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
@@ -154,6 +165,7 @@ appstream-util validate-relax --nonet \
 %doc Readme.md
 %license license.txt
 %{_bindir}/%{name}-nogui
+%{_bindir}/%{name}-nogui-x11
 %{_mandir}/man6/%{name}-nogui.*
 
 %files data
@@ -179,6 +191,12 @@ fi
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %changelog
+* Wed Jan 4 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-10
+- Add launch scripts for seemless xwayland support
+- Revert workaround in desktop file
+- Use check macro
+- Enable LTO
+
 * Tue Jan 3 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-9
 - Workaround for wayland (force x11 for GUI)
 
