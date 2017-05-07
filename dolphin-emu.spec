@@ -2,7 +2,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -103,8 +103,8 @@ This package provides the data files for dolphin-emu.
 sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 
 #Generate launch scripts for seemless xwayland support
-echo -e "#!/bin/sh\nGDK_BACKEND=x11 %name-x11 \$@\n" > %{name}.sh
-echo -e "#!/bin/sh\nGDK_BACKEND=x11 %name-nogui-x11 \$@\n" > %{name}-nogui.sh
+echo -e '#!/bin/sh\nGDK_BACKEND=x11 %name-x11 "$@"\n' > %{name}.sh
+echo -e '#!/bin/sh\nGDK_BACKEND=x11 %name-nogui-x11 "$@"\n' > %{name}-nogui.sh
 
 #Font license, just making things more generic
 sed 's| this directory | %{name}/Sys/GC |g' \
@@ -122,6 +122,9 @@ cd Bochs_disasm
 rm -rf `ls | grep -v 'stdafx' | grep -v 'CMakeLists.txt'`
 ln -s %{_includedir}/bochs/config.h ./config.h
 ln -s %{_includedir}/bochs/disasm/* ./
+#patch for bochs 2.6.9+
+sed -i '/decoder.h/d' *.h
+
 
 %build
 %cmake . \
@@ -191,6 +194,10 @@ fi
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %changelog
+* Sun May 7 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-13
+- Patch and rebuild for bochs 2.6.9
+- Fix launcher script issues
+
 * Wed Feb 15 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-12
 - Rebuilt SFML 2.4
 
