@@ -2,7 +2,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        13%{?dist}
+Release:        14%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -120,11 +120,8 @@ rm -rf `ls | grep -v 'Bochs' | grep -v 'xxhash'`
 #Remove Bundled Bochs source and replace with links:
 cd Bochs_disasm
 rm -rf `ls | grep -v 'stdafx' | grep -v 'CMakeLists.txt'`
-ln -s %{_includedir}/bochs/config.h ./config.h
+ln -s %{_includedir}/bochs/* ./
 ln -s %{_includedir}/bochs/disasm/* ./
-#patch for bochs 2.6.9+
-sed -i '/decoder.h/d' *.h
-
 
 %build
 %cmake . \
@@ -194,8 +191,10 @@ fi
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %changelog
+* Mon May 8 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-14
+- Rework and rebuild for bochs 2.6.9
+
 * Sun May 7 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-13
-- Patch and rebuild for bochs 2.6.9
 - Fix launcher script issues
 
 * Wed Feb 15 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-12
