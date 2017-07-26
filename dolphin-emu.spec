@@ -2,7 +2,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        14%{?dist}
+Release:        15%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -191,6 +191,9 @@ fi
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %changelog
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 5.0-15
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Mon May 8 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-14
 - Rework and rebuild for bochs 2.6.9
 
