@@ -31,7 +31,6 @@ BuildRequires:  bochs-devel
 BuildRequires:  cmake
 BuildRequires:  enet-devel
 BuildRequires:  gtest-devel
-BuildRequires:  gtk3-devel
 BuildRequires:  libao-devel
 BuildRequires:  libcurl-devel
 BuildRequires:  libevdev-devel
@@ -119,7 +118,10 @@ ln -s %{_includedir}/bochs/disasm/* ./
 
 %build
 %cmake . \
+#wxGTK3-gtk2 is somewhat differently organized prior to f28
+%if 0%{?fedora} < 28
        -DwxWidgets_CONFIG_EXECUTABLE=%{_bindir}/wx-config-3.0-gtk2 \
+%endif
        -DENABLE_LTO='TRUE' \
        -DUSE_SHARED_ENET=TRUE \
        -DUSE_SHARED_GTEST=TRUE
