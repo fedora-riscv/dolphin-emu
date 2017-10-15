@@ -2,7 +2,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        16%{?dist}
+Release:        17%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -21,8 +21,6 @@ Url:            https://dolphin-emu.org/
 License:        GPLv2+ and BSD and MIT and zlib
 Source0:        https://github.com/%{name}/dolphin/archive/%{version}.tar.gz
 Source1:        %{name}.appdata.xml
-#GTK3 patch, upstream doesn't care for gtk3
-Patch0:         %{name}-%{version}-gtk3.patch
 #Missing include for mbedtls 2.3+, fixed upstream:
 #https://github.com/dolphin-emu/dolphin/commit/980ecfba7f934f91c021bdeec06d0518dd570bac
 Patch1:         %{name}-%{version}-mbedtls2.3.patch
@@ -52,7 +50,7 @@ BuildRequires:  SFML-devel
 BuildRequires:  SOIL-devel
 BuildRequires:  soundtouch-devel
 BuildRequires:  systemd-devel
-BuildRequires:  wxGTK3-devel
+BuildRequires:  compat-wxGTK3-gtk2-devel
 BuildRequires:  zlib-devel
 
 BuildRequires:  gettext
@@ -102,10 +100,6 @@ This package provides the data files for dolphin-emu.
 #Allow building with cmake macro
 sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 
-#Generate launch scripts for seemless xwayland support
-echo -e '#!/bin/sh\nGDK_BACKEND=x11 %name-x11 "$@"\n' > %{name}.sh
-echo -e '#!/bin/sh\nGDK_BACKEND=x11 %name-nogui-x11 "$@"\n' > %{name}-nogui.sh
-
 #Font license, just making things more generic
 sed 's| this directory | %{name}/Sys/GC |g' \
     Data/Sys/GC/font-licenses.txt > font-licenses.txt
@@ -125,6 +119,7 @@ ln -s %{_includedir}/bochs/disasm/* ./
 
 %build
 %cmake . \
+       -DwxWidgets_CONFIG_EXECUTABLE=%{_bindir}/wx-config-3.0-gtk2 \
        -DENABLE_LTO='TRUE' \
        -DUSE_SHARED_ENET=TRUE \
        -DUSE_SHARED_GTEST=TRUE
@@ -132,13 +127,6 @@ ln -s %{_includedir}/bochs/disasm/* ./
 
 %install
 %make_install
-#Move binaries and install launch scripts
-mv -f %{buildroot}/%{_bindir}/%{name} \
-  %{buildroot}/%{_bindir}/%{name}-x11
-mv -f %{buildroot}/%{_bindir}/%{name}-nogui \
-  %{buildroot}/%{_bindir}/%{name}-nogui-x11
-install -p -D -m 0755 %{name}.sh %{buildroot}/%{_bindir}/%{name}
-install -p -D -m 0755 %{name}-nogui.sh %{buildroot}/%{_bindir}/%{name}-nogui
 #Install appdata.xml
 install -p -D -m 0644 %{SOURCE1} \
   %{buildroot}/%{_datadir}/appdata/%{name}.appdata.xml
@@ -153,7 +141,6 @@ appstream-util validate-relax --nonet \
 %doc Readme.md
 %license license.txt
 %{_bindir}/%{name}
-%{_bindir}/%{name}-x11
 %{_mandir}/man6/%{name}.*
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
@@ -165,7 +152,6 @@ appstream-util validate-relax --nonet \
 %doc Readme.md
 %license license.txt
 %{_bindir}/%{name}-nogui
-%{_bindir}/%{name}-nogui-x11
 %{_mandir}/man6/%{name}-nogui.*
 
 %files data
@@ -191,6 +177,10 @@ fi
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %changelog
+* Sun Oct 15 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-17
+- Rebuild with gtk2, since it's been merged into wxGTK3
+- Cleanup unnecessary walyand script due to gtk2, closer to upstream now
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 5.0-16
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
