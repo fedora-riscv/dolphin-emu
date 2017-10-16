@@ -1,5 +1,11 @@
 %undefine _hardened_build
 
+%if 0%{?fedora} > 27
+%global wx_config wx-config
+%else
+%global wx_config wx-config-3.0-gtk2
+%endif
+
 Name:           dolphin-emu
 Version:        5.0
 Release:        17%{?dist}
@@ -119,9 +125,7 @@ ln -s %{_includedir}/bochs/disasm/* ./
 %build
 %cmake . \
 #wxGTK3-gtk2 is somewhat differently organized prior to f28
-%if 0%{?fedora} < 28
-       -DwxWidgets_CONFIG_EXECUTABLE=%{_bindir}/wx-config-3.0-gtk2 \
-%endif
+       -DwxWidgets_CONFIG_EXECUTABLE=%{_bindir}/%{wx_config} \
        -DENABLE_LTO='TRUE' \
        -DUSE_SHARED_ENET=TRUE \
        -DUSE_SHARED_GTEST=TRUE
