@@ -1,5 +1,6 @@
 %undefine _hardened_build
 
+#wxGTK3-gtk2 is somewhat differently organized prior to f28
 %if 0%{?fedora} > 27
 %global wx_config wx-config
 %else
@@ -124,7 +125,6 @@ ln -s %{_includedir}/bochs/disasm/* ./
 
 %build
 %cmake . \
-#wxGTK3-gtk2 is somewhat differently organized prior to f28
        -DwxWidgets_CONFIG_EXECUTABLE=%{_bindir}/%{wx_config} \
        -DENABLE_LTO='TRUE' \
        -DUSE_SHARED_ENET=TRUE \
