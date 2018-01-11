@@ -9,7 +9,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        17%{?dist}
+Release:        18%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -170,19 +170,10 @@ appstream-util validate-relax --nonet \
 %exclude %{_datadir}/%{name}/sys/GC/font-licenses.txt
 %{_datadir}/%{name}
 
-%post
-/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-
-%postun
-if [ $1 -eq 0 ] ; then
-    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-fi
-
-%posttrans
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-
 %changelog
+* Thu Jan 11 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 5.0-18
+- Remove obsolete scriptlets
+
 * Sun Oct 15 2017 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-17
 - Rebuild with gtk2, since it's been merged into wxGTK3
 - Cleanup unnecessary walyand script due to gtk2, closer to upstream now
