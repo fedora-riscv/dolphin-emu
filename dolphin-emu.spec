@@ -9,7 +9,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        19%{?dist}
+Release:        20%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -171,6 +171,9 @@ appstream-util validate-relax --nonet \
 %{_datadir}/%{name}
 
 %changelog
+* Mon Feb 19 2018 Robert Scheck <robert@fedoraproject.org> - 5.0-20
+- Rebuilt for mbed TLS 2.7.0
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 5.0-19
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
