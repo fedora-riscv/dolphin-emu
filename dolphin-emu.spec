@@ -9,7 +9,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        20%{?dist}
+Release:        21%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -57,6 +57,7 @@ BuildRequires:  SOIL-devel
 BuildRequires:  soundtouch-devel
 BuildRequires:  systemd-devel
 BuildRequires:  compat-wxGTK3-gtk2-devel
+BuildRequires:  xxhash-devel
 BuildRequires:  zlib-devel
 
 BuildRequires:  gettext
@@ -66,12 +67,6 @@ BuildRequires:  hicolor-icon-theme
 
 #Only the following architectures are supported:
 ExclusiveArch:  x86_64 armv7l aarch64
-
-#xxhash is bundled for now, will be unbundled after included in Fedora:
-#https://bugzilla.redhat.com/show_bug.cgi?id=1282063
-#Note that xxhash was unversioned prior to 0.5.0, 0.4.39 is a placeholder
-#It was actually called r39: https://github.com/Cyan4973/xxHash/tree/r39
-Provides:       bundled(xxhash) = 0.4.39
 
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
@@ -114,9 +109,9 @@ sed 's| this directory | %{name}/Sys/GC |g' \
 #https://github.com/dolphin-emu/dolphin/pull/4496
 sed -i 's/CHAR_/CHARACTER_/g' Source/Core/VideoBackends/OGL/RasterFont.cpp
 
-###Remove Bundled Libraries except xxhash, mentioned above:
+###Remove Bundled:
 cd Externals
-rm -rf `ls | grep -v 'Bochs' | grep -v 'xxhash'`
+rm -rf `ls | grep -v 'Bochs'`
 #Remove Bundled Bochs source and replace with links:
 cd Bochs_disasm
 rm -rf `ls | grep -v 'stdafx' | grep -v 'CMakeLists.txt'`
@@ -124,9 +119,11 @@ ln -s %{_includedir}/bochs/* ./
 ln -s %{_includedir}/bochs/disasm/* ./
 
 %build
+#Script to find xxhash is not implemented, just tell cmake it was found
 %cmake . \
        -DwxWidgets_CONFIG_EXECUTABLE=%{_bindir}/%{wx_config} \
        -DENABLE_LTO='TRUE' \
+       -DXXHASH_FOUND=TRUE \
        -DUSE_SHARED_ENET=TRUE \
        -DUSE_SHARED_GTEST=TRUE
 %make_build
@@ -171,6 +168,9 @@ appstream-util validate-relax --nonet \
 %{_datadir}/%{name}
 
 %changelog
+* Wed Mar 07 2018 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-21
+- Unbundle xxhash
+
 * Mon Feb 19 2018 Robert Scheck <robert@fedoraproject.org> - 5.0-20
 - Rebuilt for mbed TLS 2.7.0
 
