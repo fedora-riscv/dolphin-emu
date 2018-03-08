@@ -98,6 +98,9 @@ This package provides the data files for dolphin-emu.
 %prep
 %autosetup -p1 -n dolphin-%{version}
 
+#Patch for GCC8
+sed -i 's/_xgetbv(/de_xgetbv(/g' Source/Core/Common/x64CPUDetect.cpp
+
 #Allow building with cmake macro
 sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 
