@@ -32,6 +32,8 @@ Source1:        %{name}.appdata.xml
 #https://github.com/dolphin-emu/dolphin/commit/980ecfba7f934f91c021bdeec06d0518dd570bac
 Patch1:         %{name}-%{version}-mbedtls2.3.patch
 
+BuildRequires:  gcc
+BuildRequires:  gcc-c++
 BuildRequires:  alsa-lib-devel
 BuildRequires:  bluez-libs-devel
 BuildRequires:  bochs-devel
