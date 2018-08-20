@@ -9,7 +9,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        22%{?dist}.1
+Release:        24%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -31,6 +31,8 @@ Source1:        %{name}.appdata.xml
 #Missing include for mbedtls 2.3+, fixed upstream:
 #https://github.com/dolphin-emu/dolphin/commit/980ecfba7f934f91c021bdeec06d0518dd570bac
 Patch1:         %{name}-%{version}-mbedtls2.3.patch
+#Patch for soundtouch, not applicable upstream
+Patch2:         %{name}-%{version}-soundtouch-exception-fix.patch
 
 BuildRequires:  alsa-lib-devel
 BuildRequires:  bluez-libs-devel
@@ -171,6 +173,9 @@ appstream-util validate-relax --nonet \
 %{_datadir}/%{name}
 
 %changelog
+* Mon Aug 20 2018 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-24
+- Fix for soundtouch 2.0.0-5 onwards
+
 * Tue Jul 17 2018 Hans de Goede <jwrdegoede@fedoraproject.org> - 5.0-22.fc27.1
 - Rebuilt for new soundtouch (rhbz#1601724)
 
