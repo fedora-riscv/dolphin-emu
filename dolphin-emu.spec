@@ -9,7 +9,7 @@
 
 Name:           dolphin-emu
 Version:        5.0
-Release:        24%{?dist}
+Release:        25%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -175,6 +175,9 @@ appstream-util validate-relax --nonet \
 %{_datadir}/%{name}
 
 %changelog
+* Thu Sep 27 2018 Morten Stevens <mstevens@fedoraproject.org> - 5.0-25
+- Rebuilt for mbed TLS 2.13.0
+
 * Mon Aug 20 2018 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0-24
 - Fix for soundtouch 2.0.0-5 onwards
 
