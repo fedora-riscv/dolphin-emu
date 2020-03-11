@@ -1,15 +1,17 @@
 %undefine _hardened_build
+#I think one of the bundled libraries needs to be static.
+#Static libraries are fine as all of the libraries included are bundled.
+%undefine _cmake_shared_libs
 
-#wxGTK3-gtk2 is somewhat differently organized prior to f28
-%if 0%{?fedora} > 27
-%global wx_config wx-config
-%else
-%global wx_config wx-config-3.0-gtk2
-%endif
+#Dolphin now uses gitsnapshots for it's versions.
+#See upstream release notes for this snapshot:
+#https://dolphin-emu.org/download/dev/$commit
+%global commit 79ea55c912576df0b4964b9513f05db93b5f97d8
+%global snapnumber 10474
 
 Name:           dolphin-emu
-Version:        5.0
-Release:        29%{?dist}
+Version:        5.0.%{snapnumber}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -26,13 +28,25 @@ Url:            https://dolphin-emu.org/
 #dolphin-5.0/Source/Core/AudioCommon/aldlist.cpp
 ##Any code in Externals has a license break down in Externals/licenses.md
 License:        GPLv2+ and BSD and MIT and zlib
-Source0:        https://github.com/%{name}/dolphin/archive/%{version}.tar.gz
+Source0:        https://github.com/%{name}/dolphin/archive/%{commit}/%{name}-%{version}.tar.gz
 Source1:        %{name}.appdata.xml
-#Missing include for mbedtls 2.3+, fixed upstream:
-#https://github.com/dolphin-emu/dolphin/commit/980ecfba7f934f91c021bdeec06d0518dd570bac
-Patch1:         %{name}-%{version}-mbedtls2.3.patch
-#Patch for soundtouch, not applicable upstream
-Patch2:         %{name}-%{version}-soundtouch-exception-fix.patch
+#See upstream pull request:
+#https://github.com/dolphin-emu/dolphin/pull/8667
+Patch0:         0001-Allow-using-shared-minizip.patch
+
+##Bundled code ahoy
+#FreeSurround isn't in Fedora, difficulty of unbundling is unknown
+Provides:       bundled(FreeSurround)
+#cubeb can be unbundled easily if it's introduced into Fedora
+Provides:       bundled(cubeb)
+#soundtouch may not unbundle due to custom compilation changes needed
+Provides:       bundled(soundtouch) = 1.9.2
+#TODO: I noticed some compilation errors with Fedora's picojson
+Provides:       bundled(picojson)
+#It seems unclear if these can be unbundled:
+Provides:       bundled(imgui) = 1.70
+Provides:       bundled(cpp-optparse)
+Provides:       bundled(glslang)
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -41,26 +55,29 @@ BuildRequires:  bluez-libs-devel
 BuildRequires:  bochs-devel
 BuildRequires:  cmake
 BuildRequires:  enet-devel
-BuildRequires:  gtest-devel
+BuildRequires:  hidapi-devel
 BuildRequires:  libao-devel
 BuildRequires:  libcurl-devel
 BuildRequires:  libevdev-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libusb-devel
+BuildRequires:  libXi-devel
 BuildRequires:  libXrandr-devel
 BuildRequires:  lzo-devel
 BuildRequires:  mbedtls-devel
 BuildRequires:  mesa-libGL-devel
+BuildRequires:  minizip-devel
 BuildRequires:  miniupnpc-devel
 BuildRequires:  openal-soft-devel
+#BuildRequires:  picojson-devel
+BuildRequires:  pugixml-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  portaudio-devel
 BuildRequires:  SDL2-devel
 BuildRequires:  SFML-devel
-BuildRequires:  SOIL-devel
-BuildRequires:  soundtouch-devel
 BuildRequires:  systemd-devel
-BuildRequires:  compat-wxGTK3-gtk2-devel
+BuildRequires:  qt5-devel
+BuildRequires:  vulkan-headers
 BuildRequires:  xxhash-devel
 BuildRequires:  zlib-devel
 
@@ -70,7 +87,7 @@ BuildRequires:  libappstream-glib
 BuildRequires:  hicolor-icon-theme
 
 #Only the following architectures are supported:
-ExclusiveArch:  x86_64 armv7l aarch64
+ExclusiveArch:  x86_64 aarch64
 
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
@@ -100,25 +117,25 @@ This package provides the data files for dolphin-emu.
 ####################################################
 
 %prep
-%autosetup -p1 -n dolphin-%{version}
-
-#Patch for GCC8
-sed -i 's/_xgetbv(/de_xgetbv(/g' Source/Core/Common/x64CPUDetect.cpp
+%autosetup -p1 -n dolphin-%{commit}
 
 #Allow building with cmake macro
 sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
+
+#Silences a warning
+ln -s glslang/MachineIndependent Externals/glslang/MachineIndependent
 
 #Font license, just making things more generic
 sed 's| this directory | %{name}/Sys/GC |g' \
     Data/Sys/GC/font-licenses.txt > font-licenses.txt
 
-#Patch for fedora 26+
-#https://github.com/dolphin-emu/dolphin/pull/4496
-sed -i 's/CHAR_/CHARACTER_/g' Source/Core/VideoBackends/OGL/RasterFont.cpp
+#TODO: Use system picojson header
+#sed -i 's|picojson/||' Source/Core/UICommon/*.cpp Source/Core/UICommon/*/*.cpp
 
 ###Remove Bundled:
 cd Externals
-rm -rf `ls | grep -v 'Bochs'`
+#Keep what we need...
+rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'cubeb' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'glslang' | grep -v 'picojson'`
 #Remove Bundled Bochs source and replace with links:
 cd Bochs_disasm
 rm -rf `ls | grep -v 'stdafx' | grep -v 'CMakeLists.txt'`
@@ -127,16 +144,26 @@ ln -s %{_includedir}/bochs/disasm/* ./
 
 %build
 #Script to find xxhash is not implemented, just tell cmake it was found
+#Note some items are disabled to avoid bundling
 %cmake . \
-       -DwxWidgets_CONFIG_EXECUTABLE=%{_bindir}/%{wx_config} \
-       -DENABLE_LTO='TRUE' \
-       -DXXHASH_FOUND=TRUE \
-       -DUSE_SHARED_ENET=TRUE \
-       -DUSE_SHARED_GTEST=TRUE
+       -DXXHASH_FOUND=ON \
+       -DUSE_SHARED_ENET=ON \
+       -DENABLE_TESTS=OFF \
+       -DENABLE_ANALYTICS=OFF \
+       -DENCODE_FRAMEDUMPS=OFF \
+       -DUSE_DISCORD_PRESENCE=OFF \
+       -DDOLPHIN_WC_DESCRIBE=5.0-%{snapnumber} \
+       -DDOLPHIN_WC_REVISION=%{commit} \
+       -DDOLPHIN_WC_BRANCH="master"
 %make_build
 
 %install
 %make_install
+
+#Install udev rules
+mkdir -p %{buildroot}%{_udevrulesdir}
+install -m 0644 Data/51-usb-device.rules %{buildroot}%{_udevrulesdir}/51-dolphin-usb-device.rules
+
 #Install appdata.xml
 install -p -D -m 0644 %{SOURCE1} \
   %{buildroot}/%{_datadir}/appdata/%{name}.appdata.xml
@@ -173,8 +200,12 @@ appstream-util validate-relax --nonet \
 #Already packaged:
 %exclude %{_datadir}/%{name}/sys/GC/font-licenses.txt
 %{_datadir}/%{name}
+%{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Wed Mar 11 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.10474-1
+- Update to 5.0-10474
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5.0-29
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
