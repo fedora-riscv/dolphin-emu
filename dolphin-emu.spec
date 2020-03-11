@@ -6,8 +6,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 79ea55c912576df0b4964b9513f05db93b5f97d8
-%global snapnumber 10474
+%global commit 049183148307ad6a5a3244c313841fc97448b647
+%global snapnumber 11617
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
@@ -33,6 +33,7 @@ Source1:        %{name}.appdata.xml
 #See upstream pull request:
 #https://github.com/dolphin-emu/dolphin/pull/8667
 Patch0:         0001-Allow-using-shared-minizip.patch
+Patch1:         0002-Allow-using-shared-fmt.patch
 
 ##Bundled code ahoy
 #FreeSurround isn't in Fedora, difficulty of unbundling is unknown
@@ -57,6 +58,7 @@ BuildRequires:  bochs-devel
 %endif
 BuildRequires:  cmake
 BuildRequires:  enet-devel
+BuildRequires:  fmt-devel >= 5.3.0
 BuildRequires:  hidapi-devel
 BuildRequires:  libao-devel
 BuildRequires:  libcurl-devel
@@ -209,6 +211,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Wed Mar 11 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11617-1
+- Update to 5.0-11617
+
 * Wed Mar 11 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.10474-1
 - Update to 5.0-10474
 
