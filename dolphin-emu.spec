@@ -52,7 +52,9 @@ BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  alsa-lib-devel
 BuildRequires:  bluez-libs-devel
+%ifarch x86_64
 BuildRequires:  bochs-devel
+%endif
 BuildRequires:  cmake
 BuildRequires:  enet-devel
 BuildRequires:  hidapi-devel
@@ -136,11 +138,15 @@ sed 's| this directory | %{name}/Sys/GC |g' \
 cd Externals
 #Keep what we need...
 rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'cubeb' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'glslang' | grep -v 'picojson'`
-#Remove Bundled Bochs source and replace with links:
+#Remove Bundled Bochs source and replace with links (for x86 only):
+%ifarch x86_64
 cd Bochs_disasm
 rm -rf `ls | grep -v 'stdafx' | grep -v 'CMakeLists.txt'`
 ln -s %{_includedir}/bochs/* ./
 ln -s %{_includedir}/bochs/disasm/* ./
+%else
+rm -rf Bochs_disasm
+%endif
 
 %build
 #Script to find xxhash is not implemented, just tell cmake it was found
