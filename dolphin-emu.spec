@@ -35,15 +35,14 @@ Source1:        %{name}.appdata.xml
 Patch0:         0001-Allow-using-shared-minizip.patch
 
 ##Bundled code ahoy
-#FreeSurround isn't in Fedora, difficulty of unbundling is unknown
+#The following isn't in Fedora yet:
 Provides:       bundled(FreeSurround)
-#cubeb can be unbundled easily if it's introduced into Fedora
 Provides:       bundled(cubeb)
-#soundtouch may not unbundle due to custom compilation changes needed
-Provides:       bundled(soundtouch) = 1.9.2
-#It seems unclear if these can be unbundled:
 Provides:       bundled(imgui) = 1.70
-Provides:       bundled(cpp-optparse)
+Provides:       bundled(cpp-argparse)
+#soundtouch cannot be unbundled easily, as it requires compile time changes:
+Provides:       bundled(soundtouch) = 1.9.2
+#This might take some work to unbundle:
 Provides:       bundled(glslang)
 
 BuildRequires:  gcc
