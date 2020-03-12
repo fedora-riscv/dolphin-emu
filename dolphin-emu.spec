@@ -145,6 +145,7 @@ rm -rf Bochs_disasm
 #Replace bundled picojson with a modified system copy (remove use of throw)
 pushd picojson
 rm picojson.h
+#In master, picojson has build option "PICOJSON_NOEXCEPT", but for now:
 sed "s/throw std::.*;/std::abort();/g" /usr/include/picojson.h > picojson.h
 popd
 
