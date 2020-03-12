@@ -11,7 +11,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -42,8 +42,6 @@ Provides:       bundled(FreeSurround)
 Provides:       bundled(cubeb)
 #soundtouch may not unbundle due to custom compilation changes needed
 Provides:       bundled(soundtouch) = 1.9.2
-#TODO: I noticed some compilation errors with Fedora's picojson
-Provides:       bundled(picojson)
 #It seems unclear if these can be unbundled:
 Provides:       bundled(imgui) = 1.70
 Provides:       bundled(cpp-optparse)
@@ -73,7 +71,7 @@ BuildRequires:  mesa-libGL-devel
 BuildRequires:  minizip-devel
 BuildRequires:  miniupnpc-devel
 BuildRequires:  openal-soft-devel
-#BuildRequires:  picojson-devel
+BuildRequires:  picojson-devel
 BuildRequires:  pugixml-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  portaudio-devel
@@ -133,22 +131,25 @@ ln -s glslang/MachineIndependent Externals/glslang/MachineIndependent
 sed 's| this directory | %{name}/Sys/GC |g' \
     Data/Sys/GC/font-licenses.txt > font-licenses.txt
 
-#TODO: Use system picojson header
-#sed -i 's|picojson/||' Source/Core/UICommon/*.cpp Source/Core/UICommon/*/*.cpp
-
 ###Remove Bundled:
 cd Externals
 #Keep what we need...
 rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'cubeb' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'glslang' | grep -v 'picojson'`
 #Remove Bundled Bochs source and replace with links (for x86 only):
 %ifarch x86_64
-cd Bochs_disasm
+pushd Bochs_disasm
 rm -rf `ls | grep -v 'stdafx' | grep -v 'CMakeLists.txt'`
 ln -s %{_includedir}/bochs/* ./
 ln -s %{_includedir}/bochs/disasm/* ./
+popd
 %else
 rm -rf Bochs_disasm
 %endif
+#Replace bundled picojson with a modified system copy (remove use of throw)
+pushd picojson
+rm picojson.h
+sed "s/throw std::.*;/std::abort();/g" /usr/include/picojson.h > picojson.h
+popd
 
 %build
 #Script to find xxhash is not implemented, just tell cmake it was found
@@ -211,6 +212,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Thu Mar 12 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11617-2
+- Unbundle picojson
+
 * Wed Mar 11 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11617-1
 - Update to 5.0-11617
 
