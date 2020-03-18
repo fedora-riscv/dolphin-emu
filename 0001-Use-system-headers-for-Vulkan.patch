@@ -1,0 +1,82 @@
+From 4a1abddab8201b0f83ba3ef737c2603b5f255063 Mon Sep 17 00:00:00 2001
+From: Mystro256 <alexjnewt@hotmail.com>
+Date: Thu, 12 Mar 2020 13:41:58 -0400
+Subject: [PATCH] Use system headers for Vulkan
+
+This can't be upstreamed, as it should be reworked to allow these bundled
+libraries if detected. This will work in the meantime for Fedora though.
+---
+ CMakeLists.txt                                |  1 -
+ .../Core/VideoBackends/Vulkan/CMakeLists.txt  | 19 +++++++++----------
+ .../VideoBackends/Vulkan/ShaderCompiler.cpp   |  9 +++++++++
+ 3 files changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e6c242ba13..2394740791 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -541,7 +541,6 @@ else()
+   add_subdirectory(Externals/Bochs_disasm)
+ endif()
+ add_subdirectory(Externals/cpp-optparse)
+-add_subdirectory(Externals/glslang)
+ add_subdirectory(Externals/imgui)
+ 
+ find_package(pugixml)
+diff --git a/Source/Core/VideoBackends/Vulkan/CMakeLists.txt b/Source/Core/VideoBackends/Vulkan/CMakeLists.txt
+index 87628030e9..a79ce6ddf3 100644
+--- a/Source/Core/VideoBackends/Vulkan/CMakeLists.txt
++++ b/Source/Core/VideoBackends/Vulkan/CMakeLists.txt
+@@ -43,20 +43,19 @@ PUBLIC
+   videocommon
+ 
+ PRIVATE
+-  # Link against glslang, the other necessary libraries are referenced by the executable.
+   glslang
++  OSDependent
++  OGLCompiler
++  glslang
++  HLSL
++  SPIRV
++  SPIRV-Tools-opt
++  SPIRV-Tools
+   xxhash
+ )
+ 
+-# Only include the Vulkan headers when building the Vulkan backend
+-target_include_directories(videovulkan
+-PRIVATE
+-  ${CMAKE_SOURCE_DIR}/Externals/Vulkan/Include
+-)
+-
+-# Silence warnings on glslang by flagging it as a system include
+ target_include_directories(videovulkan
+ SYSTEM PRIVATE
+-  ${CMAKE_SOURCE_DIR}/Externals/glslang/glslang/Public
+-  ${CMAKE_SOURCE_DIR}/Externals/glslang/SPIRV
++  /usr/include/glslang/Public
++  /usr/include/SPIRV
+ )
+diff --git a/Source/Core/VideoBackends/Vulkan/ShaderCompiler.cpp b/Source/Core/VideoBackends/Vulkan/ShaderCompiler.cpp
+index 7b6beb11b0..2725082a2d 100644
+--- a/Source/Core/VideoBackends/Vulkan/ShaderCompiler.cpp
++++ b/Source/Core/VideoBackends/Vulkan/ShaderCompiler.cpp
+@@ -342,6 +342,15 @@ const TBuiltInResource* GetCompilerResourceLimits()
+                                           /* .MaxCullDistances = */ 8,
+                                           /* .MaxCombinedClipAndCullDistances = */ 8,
+                                           /* .MaxSamples = */ 4,
++                                          /* .maxMeshOutputVerticesNV = */ 0,
++                                          /* .maxMeshOutputPrimitivesNV = */ 0,
++                                          /* .maxMeshWorkGroupSizeX_NV = */ 0,
++                                          /* .maxMeshWorkGroupSizeY_NV = */ 0,
++                                          /* .maxMeshWorkGroupSizeZ_NV = */ 0,
++                                          /* .maxTaskWorkGroupSizeX_NV = */ 0,
++                                          /* .maxTaskWorkGroupSizeY_NV = */ 0,
++                                          /* .maxTaskWorkGroupSizeZ_NV = */ 0,
++                                          /* .maxMeshViewCountNV = */ 0,
+                                           /* .limits = */
+                                           {
+                                               /* .nonInductiveForLoops = */ 1,
+-- 
+2.21.1
+

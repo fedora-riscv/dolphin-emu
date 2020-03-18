@@ -11,7 +11,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -33,6 +33,8 @@ Source1:        %{name}.appdata.xml
 #See upstream pull request:
 #https://github.com/dolphin-emu/dolphin/pull/8667
 Patch0:         0001-Allow-using-shared-minizip.patch
+#Not upstream-able for now:
+Patch2:         0001-Use-system-headers-for-Vulkan.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -42,8 +44,6 @@ Provides:       bundled(imgui) = 1.70
 Provides:       bundled(cpp-argparse)
 #soundtouch cannot be unbundled easily, as it requires compile time changes:
 Provides:       bundled(soundtouch) = 1.9.2
-#This might take some work to unbundle:
-Provides:       bundled(glslang)
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -54,6 +54,7 @@ BuildRequires:  bochs-devel
 %endif
 BuildRequires:  cmake
 BuildRequires:  enet-devel
+BuildRequires:  glslang-devel
 BuildRequires:  hidapi-devel
 BuildRequires:  libao-devel
 BuildRequires:  libcurl-devel
@@ -74,6 +75,9 @@ BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  portaudio-devel
 BuildRequires:  SDL2-devel
 BuildRequires:  SFML-devel
+BuildRequires:  spirv-headers-devel
+BuildRequires:  spirv-tools
+BuildRequires:  spirv-tools-devel
 BuildRequires:  systemd-devel
 BuildRequires:  qt5-devel
 BuildRequires:  vulkan-headers
@@ -121,9 +125,6 @@ This package provides the data files for dolphin-emu.
 #Allow building with cmake macro
 sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 
-#Silences a warning
-ln -s glslang/MachineIndependent Externals/glslang/MachineIndependent
-
 #Font license, just making things more generic
 sed 's| this directory | %{name}/Sys/GC |g' \
     Data/Sys/GC/font-licenses.txt > font-licenses.txt
@@ -131,7 +132,7 @@ sed 's| this directory | %{name}/Sys/GC |g' \
 ###Remove Bundled:
 cd Externals
 #Keep what we need...
-rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'cubeb' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'glslang' | grep -v 'picojson'`
+rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'cubeb' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson'`
 #Remove Bundled Bochs source and replace with links (for x86 only):
 %ifarch x86_64
 pushd Bochs_disasm
@@ -210,6 +211,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Wed Mar 18 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.10474-3
+- Unbundle glslang
+
 * Thu Mar 12 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.10474-2
 - Unbundle picojson
 
