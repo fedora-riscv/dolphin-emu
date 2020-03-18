@@ -1,4 +1,4 @@
-From 4a1abddab8201b0f83ba3ef737c2603b5f255063 Mon Sep 17 00:00:00 2001
+From f7e509deb93ca9221b0cc6174f73c6fd61cd7157 Mon Sep 17 00:00:00 2001
 From: Mystro256 <alexjnewt@hotmail.com>
 Date: Thu, 12 Mar 2020 13:41:58 -0400
 Subject: [PATCH] Use system headers for Vulkan
@@ -12,13 +12,13 @@ libraries if detected. This will work in the meantime for Fedora though.
  3 files changed, 18 insertions(+), 11 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index e6c242ba13..2394740791 100644
+index 9af66009a1..b13e1dc231 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -541,7 +541,6 @@ else()
+@@ -539,7 +539,6 @@ else()
+   message(STATUS "Using static fmt from Externals")
    add_subdirectory(Externals/fmt EXCLUDE_FROM_ALL)
  endif()
- 
 -add_subdirectory(Externals/glslang)
  add_subdirectory(Externals/imgui)
  

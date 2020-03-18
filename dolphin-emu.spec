@@ -6,12 +6,12 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit bb7623e3ba4c5ed1d7089e6c9be388d0f0272c2e
-%global snapnumber 11713
+%global commit 9709d6a353a85cec410563a9e1a2a26ba83e5bbb
+%global snapnumber 11782
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -30,12 +30,8 @@ Url:            https://dolphin-emu.org/
 License:        GPLv2+ and BSD and MIT and zlib
 Source0:        https://github.com/%{name}/dolphin/archive/%{commit}/%{name}-%{version}.tar.gz
 Source1:        %{name}.appdata.xml
-#See upstream pull request:
-#https://github.com/dolphin-emu/dolphin/pull/8667
-Patch0:         0001-Allow-using-shared-minizip.patch
-Patch1:         0002-Allow-using-shared-fmt.patch
 #Not upstream-able for now:
-Patch2:         0001-Use-system-headers-for-Vulkan.patch
+Patch1:         0001-Use-system-headers-for-Vulkan.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -213,6 +209,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Wed Mar 18 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11782-1
+- Update to 5.0-11782
+
 * Wed Mar 18 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11713-3
 - Unbundle glslang
 
