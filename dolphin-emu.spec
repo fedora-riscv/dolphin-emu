@@ -6,8 +6,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 4b91185056e9f140c73567a3b54444443d25af2f
-%global snapnumber 11817
+%global commit 5988d20917b223430fc53180aa96922ceeaecfee
+%global snapnumber 11819
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
@@ -86,6 +86,7 @@ BuildRequires:  gettext
 BuildRequires:  desktop-file-utils
 BuildRequires:  libappstream-glib
 BuildRequires:  hicolor-icon-theme
+BuildRequires:  /usr/bin/env
 
 #Only the following architectures are supported:
 ExclusiveArch:  x86_64 aarch64
@@ -124,9 +125,9 @@ This package provides the data files for dolphin-emu.
 #Allow building with cmake macro
 sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 
-#Font license, just making things more generic
-sed 's| this directory | %{name}/Sys/GC |g' \
-    Data/Sys/GC/font-licenses.txt > font-licenses.txt
+#Font license, drop the install directory into thie file
+echo "%{_datadir}/%{name}/Sys/GC:" > font-licenses.txt
+cat Data/Sys/GC/font-licenses.txt >> font-licenses.txt
 
 ###Remove Bundled:
 cd Externals
@@ -210,6 +211,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Fri Mar 27 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11819-1
+- Update to 5.0-11819
+
 * Wed Mar 25 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11817-1
 - Update to 5.0-11817
 
