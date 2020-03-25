@@ -6,8 +6,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 9709d6a353a85cec410563a9e1a2a26ba83e5bbb
-%global snapnumber 11782
+%global commit 4b91185056e9f140c73567a3b54444443d25af2f
+%global snapnumber 11817
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
@@ -30,7 +30,7 @@ Url:            https://dolphin-emu.org/
 License:        GPLv2+ and BSD and MIT and zlib
 Source0:        https://github.com/%{name}/dolphin/archive/%{commit}/%{name}-%{version}.tar.gz
 Source1:        %{name}.appdata.xml
-#Not upstream-able for now:
+#Can't be upstreamed as-is, needs rework:
 Patch1:         0001-Use-system-headers-for-Vulkan.patch
 
 ##Bundled code ahoy
@@ -210,6 +210,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Wed Mar 25 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11817-1
+- Update to 5.0-11817
+
 * Wed Mar 18 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11782-1
 - Update to 5.0-11782
 
