@@ -95,6 +95,7 @@ BuildRequires:  hicolor-icon-theme
 ExclusiveArch:  x86_64 aarch64
 
 Requires:       hicolor-icon-theme
+Requires:       /usr/bin/env
 Requires:       %{name}-data = %{version}-%{release}
 
 #Most of below is taken bundled spec file in source#
