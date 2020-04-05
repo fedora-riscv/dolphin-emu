@@ -11,7 +11,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -32,6 +32,11 @@ Source0:        https://github.com/%{name}/dolphin/archive/%{commit}/%{name}-%{v
 Source1:        %{name}.appdata.xml
 #Can't be upstreamed as-is, needs rework:
 Patch1:         0001-Use-system-headers-for-Vulkan.patch
+#Update soundtouch:
+#https://github.com/dolphin-emu/dolphin/pull/8725
+Patch2:         0001-soundtounch-update-to-2.1.2.patch
+Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
+Patch4:         0003-soundtounch-disable-exceptions.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -40,7 +45,7 @@ Provides:       bundled(cubeb)
 Provides:       bundled(imgui) = 1.70
 Provides:       bundled(cpp-argparse)
 #soundtouch cannot be unbundled easily, as it requires compile time changes:
-Provides:       bundled(soundtouch) = 1.9.2
+Provides:       bundled(soundtouch) = 2.1.2
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -211,6 +216,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Sun Apr 05 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11819-2
+- Update bundled soundtouch to 2.1.2
+
 * Fri Mar 27 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11819-1
 - Update to 5.0-11819
 
