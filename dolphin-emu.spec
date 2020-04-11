@@ -41,11 +41,12 @@ Patch4:         0003-soundtounch-disable-exceptions.patch
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
 Provides:       bundled(FreeSurround)
-Provides:       bundled(cubeb)
 Provides:       bundled(imgui) = 1.70
 Provides:       bundled(cpp-argparse)
 #soundtouch cannot be unbundled easily, as it requires compile time changes:
 Provides:       bundled(soundtouch) = 2.1.2
+#I think this is a firefox library, I'll need to look into this a bit more:
+Provides:       bundled(cubeb)
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
