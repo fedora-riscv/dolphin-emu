@@ -11,7 +11,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -193,7 +193,7 @@ appstream-util validate-relax --nonet \
 %files -f %{name}.lang
 %doc Readme.md
 %license license.txt
-%attr(777, root, root) %{_bindir}/%{name}
+%attr(755, root, root) %{_bindir}/%{name}
 %{_bindir}/%{name}-x11
 %{_mandir}/man6/%{name}.*
 %{_datadir}/applications/%{name}.desktop
@@ -220,6 +220,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Mon Apr 13 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.10474-5
+- Fix permissions of wrapper script
+
 * Mon Apr 13 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.10474-4
 - Add wrapper script for xwayland, fixes RH#1823234
 
