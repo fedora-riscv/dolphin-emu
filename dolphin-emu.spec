@@ -11,7 +11,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -100,7 +100,6 @@ BuildRequires:  hicolor-icon-theme
 ExclusiveArch:  x86_64 aarch64
 
 Requires:       hicolor-icon-theme
-Requires:       /usr/bin/env
 Requires:       %{name}-data = %{version}-%{release}
 
 #Most of below is taken bundled spec file in source#
@@ -180,6 +179,14 @@ popd
 mkdir -p %{buildroot}%{_udevrulesdir}
 install -m 0644 Data/51-usb-device.rules %{buildroot}%{_udevrulesdir}/51-dolphin-usb-device.rules
 
+#Create shell wrapper; dolphin doesn't work on wayland yet, but the QT GUI
+#tries to use it. For now, force xwayland. Also fixes bodhi test warning
+mv %{buildroot}/%{_bindir}/%{name} %{buildroot}/%{_bindir}/%{name}-x11
+echo 'QT_QPA_PLATFORM=xcb %{name}-x11 "$@"' > %{buildroot}/%{_bindir}/%{name}
+#Remove workaround in desktop:
+sed -i "s/^Exec=.*/Exec=dolphin-emu/g" \
+	%{buildroot}/%{_datadir}/applications/%{name}.desktop
+
 #Install appdata.xml
 install -p -D -m 0644 %{SOURCE1} \
   %{buildroot}/%{_datadir}/appdata/%{name}.appdata.xml
@@ -193,7 +200,8 @@ appstream-util validate-relax --nonet \
 %files -f %{name}.lang
 %doc Readme.md
 %license license.txt
-%{_bindir}/%{name}
+%attr(777, root, root) %{_bindir}/%{name}
+%{_bindir}/%{name}-x11
 %{_mandir}/man6/%{name}.*
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
@@ -219,6 +227,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Mon Apr 13 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11617-4
+- Add wrapper script for xwayland, fixes RH#1823234
+
 * Sun Apr 05 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11617-4
 - Update bundled soundtouch to 2.1.2
 
