@@ -11,7 +11,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -175,10 +175,13 @@ install -m 0644 Data/51-usb-device.rules %{buildroot}%{_udevrulesdir}/51-dolphin
 #Create shell wrapper; dolphin doesn't work on wayland yet, but the QT GUI
 #tries to use it. For now, force xwayland. Also fixes bodhi test warning
 mv %{buildroot}/%{_bindir}/%{name} %{buildroot}/%{_bindir}/%{name}-x11
-echo 'QT_QPA_PLATFORM=xcb %{name}-x11 "$@"' > %{buildroot}/%{_bindir}/%{name}
+echo -e '#!/usr/bin/bash\nQT_QPA_PLATFORM=xcb %{name}-x11 "$@"' \
+  > %{buildroot}/%{_bindir}/%{name}
 #Remove workaround in desktop:
 sed -i "s/^Exec=.*/Exec=dolphin-emu/g" \
-	%{buildroot}/%{_datadir}/applications/%{name}.desktop
+  %{buildroot}/%{_datadir}/applications/%{name}.desktop
+#Symlink manpage
+ln -s %{name}.6 %{buildroot}/%{_mandir}/man6/%{name}-x11.6
 
 #Install appdata.xml
 install -p -D -m 0644 %{SOURCE1} \
@@ -196,6 +199,7 @@ appstream-util validate-relax --nonet \
 %attr(755, root, root) %{_bindir}/%{name}
 %{_bindir}/%{name}-x11
 %{_mandir}/man6/%{name}.*
+%{_mandir}/man6/%{name}-x11.*
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.*
 %{_datadir}/%{name}/sys/Resources/
@@ -220,6 +224,10 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Mon Apr 13 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.10474-6
+- Forgot shebang in wrapper
+- Symlink manpage for dolphin-emu-x11
+
 * Mon Apr 13 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.10474-5
 - Fix permissions of wrapper script
 
