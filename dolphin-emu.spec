@@ -6,12 +6,12 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 5988d20917b223430fc53180aa96922ceeaecfee
-%global snapnumber 11819
+%global commit 1b97f081b8eff9012132a4124537968bdb0e03e0
+%global snapnumber 11824
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        5%{?dist}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -45,8 +45,6 @@ Provides:       bundled(imgui) = 1.70
 Provides:       bundled(cpp-argparse)
 #soundtouch cannot be unbundled easily, as it requires compile time changes:
 Provides:       bundled(soundtouch) = 2.1.2
-#I think this is a firefox library, I'll need to look into this a bit more:
-Provides:       bundled(cubeb)
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -56,6 +54,7 @@ BuildRequires:  bluez-libs-devel
 BuildRequires:  bochs-devel
 %endif
 BuildRequires:  cmake
+BuildRequires:  cubeb-devel
 BuildRequires:  enet-devel
 BuildRequires:  fmt-devel >= 6.0.0
 BuildRequires:  glslang-devel
@@ -137,7 +136,7 @@ cat Data/Sys/GC/font-licenses.txt >> font-licenses.txt
 ###Remove Bundled:
 cd Externals
 #Keep what we need...
-rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'cubeb' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson'`
+rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson'`
 #Remove Bundled Bochs source and replace with links (for x86 only):
 %ifarch x86_64
 pushd Bochs_disasm
@@ -167,7 +166,7 @@ popd
        -DUSE_DISCORD_PRESENCE=OFF \
        -DDOLPHIN_WC_DESCRIBE=5.0-%{snapnumber} \
        -DDOLPHIN_WC_REVISION=%{commit} \
-       -DDOLPHIN_WC_BRANCH="master"
+       -DDOLPHIN_WC_BRANCH="beta"
 %make_build
 
 %install
@@ -229,6 +228,10 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Wed Apr 29 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11824-1
+- Unbundle cubeb
+- Update to latest beta version
+
 * Mon Apr 13 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11819-5
 - Forgot shebang in wrapper
 - Symlink manpage for dolphin-emu-x11
