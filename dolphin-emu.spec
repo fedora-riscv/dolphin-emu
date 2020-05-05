@@ -6,8 +6,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 1b97f081b8eff9012132a4124537968bdb0e03e0
-%global snapnumber 11824
+%global commit 8d4e8314a3dcd8680ae81d91fb7e076b4496b43b
+%global snapnumber 11991
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
@@ -37,6 +37,8 @@ Patch1:         0001-Use-system-headers-for-Vulkan.patch
 Patch2:         0001-soundtounch-update-to-2.1.2.patch
 Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
 Patch4:         0003-soundtounch-disable-exceptions.patch
+#This needs to be fixed, I've reverted the patch that breaks minizip
+Patch5:         0001-Revert-Externals-Update-minizip-search-path.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -86,6 +88,7 @@ BuildRequires:  qt5-qtbase-devel
 BuildRequires:  vulkan-headers
 BuildRequires:  xxhash-devel
 BuildRequires:  zlib-devel
+BuildRequires:  xz-devel
 
 BuildRequires:  gettext
 BuildRequires:  desktop-file-utils
@@ -228,6 +231,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Tue May 05 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11991-1
+- Update to latest beta version
+
 * Wed Apr 29 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11824-1
 - Unbundle cubeb
 - Update to latest beta version
