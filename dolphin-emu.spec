@@ -86,6 +86,7 @@ BuildRequires:  spirv-tools
 BuildRequires:  spirv-tools-devel
 BuildRequires:  systemd-devel
 BuildRequires:  qt5-qtbase-devel
+BuildRequires:  qt5-qtbase-private-devel
 BuildRequires:  vulkan-headers
 BuildRequires:  xxhash-devel
 BuildRequires:  zlib-devel
