@@ -6,8 +6,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 8d4e8314a3dcd8680ae81d91fb7e076b4496b43b
-%global snapnumber 11991
+%global commit 9c12a843f86d39bc64d9e9b5b670e67455487739
+%global snapnumber 12247
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
@@ -34,11 +34,11 @@ Source1:        %{name}.appdata.xml
 Patch1:         0001-Use-system-headers-for-Vulkan.patch
 #Update soundtouch:
 #https://github.com/dolphin-emu/dolphin/pull/8725
-Patch2:         0001-soundtounch-update-to-2.1.2.patch
-Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
-Patch4:         0003-soundtounch-disable-exceptions.patch
+Patch2:         0002-soundtounch-update-to-2.1.2.patch
+Patch3:         0003-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
+Patch4:         0004-soundtounch-disable-exceptions.patch
 #This needs to be fixed, I've reverted the patch that breaks minizip
-Patch5:         0001-Revert-Externals-Update-minizip-search-path.patch
+Patch5:         0005-Revert-Externals-Update-minizip-search-path.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -68,6 +68,7 @@ BuildRequires:  libpng-devel
 BuildRequires:  libusb-devel
 BuildRequires:  libXi-devel
 BuildRequires:  libXrandr-devel
+BuildRequires:  libzstd-devel
 BuildRequires:  lzo-devel
 BuildRequires:  mbedtls-devel
 BuildRequires:  mesa-libGL-devel
@@ -161,6 +162,7 @@ popd
 #Script to find xxhash is not implemented, just tell cmake it was found
 #Note some items are disabled to avoid bundling
 %cmake . \
+	-DAPPROVED_VENDORED_DEPENDENCIES=";" \
        -DXXHASH_FOUND=ON \
        -DUSE_SHARED_ENET=ON \
        -DENABLE_TESTS=OFF \
@@ -231,6 +233,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Thu Jul 09 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12247-1
+- Update to latest beta version
+
 * Tue May 05 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.11991-1
 - Update to latest beta version
 

@@ -1,0 +1,35 @@
+From edf2e25ecdb1579bebe5ceabf4c2b72c01ab2867 Mon Sep 17 00:00:00 2001
+From: Mystro256 <alexjnewt@hotmail.com>
+Date: Wed, 11 Mar 2020 11:25:17 -0400
+Subject: [PATCH 2/3] Allow using shared fmt
+
+Note that FMT < 6.0.0 uses exceptions, which is explicitly disabled when
+building dolphin. For example, using unmodified 5.3.0 fails to compile.
+---
+ CMakeLists.txt | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a46169b43c..e6c242ba13 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -532,7 +532,15 @@ if (_M_X86)
+   add_subdirectory(Externals/Bochs_disasm)
+ endif()
+ add_subdirectory(Externals/cpp-optparse)
+-add_subdirectory(Externals/fmt EXCLUDE_FROM_ALL)
++
++find_package(fmt 6.0.0)
++if(fmt_FOUND)
++  message(STATUS "Using shared fmt")
++else()
++  message(STATUS "Using static fmt from Externals")
++  add_subdirectory(Externals/fmt EXCLUDE_FROM_ALL)
++endif()
++
+ add_subdirectory(Externals/glslang)
+ add_subdirectory(Externals/imgui)
+ 
+-- 
+2.21.1
+
