@@ -140,6 +140,18 @@ sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 echo "%{_datadir}/%{name}/Sys/GC:" > font-licenses.txt
 cat Data/Sys/GC/font-licenses.txt >> font-licenses.txt
 
+#Fix for newer vulkan/glslang
+%if 0%{?fedora} > 32
+sed -i "s/VK_PRESENT_MODE_RANGE_SIZE_KHR/(VkPresentModeKHR)("`
+	`"VK_PRESENT_MODE_FIFO_RELAXED_KHR - VK_PRESENT_MODE_IMMEDIATE_KHR + 1)/" \
+	Source/Core/VideoBackends/Vulkan/SwapChain.h
+sed -i "/maxMeshViewCountNV/ a /* .maxDualSourceDrawBuffersEXT = */ 1," \
+	Source/Core/VideoBackends/Vulkan/ShaderCompiler.cpp
+sed -i -e "/OSDependent/ a MachineIndependent" \
+	-e "/OSDependent/ a GenericCodeGen" -e "/HLSL/d" \
+	Source/Core/VideoBackends/Vulkan/CMakeLists.txt
+%endif
+
 ###Remove Bundled:
 cd Externals
 #Keep what we need...
@@ -202,7 +214,7 @@ install -p -D -m 0644 %{SOURCE1} \
 %find_lang %{name}
 
 %check
-make unittests
+%cmake_build --target unittests
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
 appstream-util validate-relax --nonet \
   %{buildroot}/%{_datadir}/appdata/*.appdata.xml
