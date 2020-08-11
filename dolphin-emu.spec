@@ -167,7 +167,7 @@ popd
 #Script to find xxhash is not implemented, just tell cmake it was found
 #Note some items are disabled to avoid bundling
 %cmake . \
-	-DAPPROVED_VENDORED_DEPENDENCIES=";" \
+	   -DAPPROVED_VENDORED_DEPENDENCIES=";" \
        -DXXHASH_FOUND=ON \
        -DUSE_SHARED_ENET=ON \
        -DENABLE_ANALYTICS=OFF \
@@ -176,10 +176,10 @@ popd
        -DDOLPHIN_WC_DESCRIBE=5.0-%{snapnumber} \
        -DDOLPHIN_WC_REVISION=%{commit} \
        -DDOLPHIN_WC_BRANCH="beta"
-%make_build
+%cmake_build
 
 %install
-%make_install
+%cmake_install
 
 #Install udev rules
 mkdir -p %{buildroot}%{_udevrulesdir}
