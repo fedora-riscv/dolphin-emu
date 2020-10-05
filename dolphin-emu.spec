@@ -6,12 +6,12 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 9c12a843f86d39bc64d9e9b5b670e67455487739
-%global snapnumber 12247
+%global commit 31524288e3b2450eaefff8202c6d26c4ba3f7333
+%global snapnumber 12716
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -45,6 +45,9 @@ Patch5:         0005-Revert-Externals-Update-minizip-search-path.patch
 Provides:       bundled(FreeSurround)
 Provides:       bundled(imgui) = 1.70
 Provides:       bundled(cpp-argparse)
+#Is this technically bundled code? Adding this just in case:
+#https://github.com/AdmiralCurtiss/rangeset
+Provides:       bundled(rangeset)
 #soundtouch cannot be unbundled easily, as it requires compile time changes:
 Provides:       bundled(soundtouch) = 2.1.2
 #dolphin uses tests not included in upstream gtest (possibly unbundle later):
@@ -155,7 +158,7 @@ sed -i -e "/OSDependent/ a MachineIndependent" \
 ###Remove Bundled:
 cd Externals
 #Keep what we need...
-rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson' | grep -v 'gtest'`
+rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson' | grep -v 'gtest' | grep -v 'rangeset'`
 #Remove Bundled Bochs source and replace with links (for x86 only):
 %ifarch x86_64
 pushd Bochs_disasm
@@ -178,6 +181,7 @@ popd
 %build
 #Script to find xxhash is not implemented, just tell cmake it was found
 #Note some items are disabled to avoid bundling
+#Set APPROVED_VENDORED_DEPENDENCIES to nothing to safe guard against bundling
 %cmake . \
 	   -DAPPROVED_VENDORED_DEPENDENCIES=";" \
        -DXXHASH_FOUND=ON \
@@ -250,6 +254,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Mon Oct 05 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-1
+- Update to latest beta version
+
 * Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5.0.12247-3
 - Second attempt - Rebuilt for
   https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild

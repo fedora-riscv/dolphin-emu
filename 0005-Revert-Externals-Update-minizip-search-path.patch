@@ -1,4 +1,4 @@
-From 69bd07c82fab992ea28391a966c648ec89617bd2 Mon Sep 17 00:00:00 2001
+From 35970592dd105d08148167384d20660e7d449fd8 Mon Sep 17 00:00:00 2001
 From: Mystro256 <alexjnewt@hotmail.com>
 Date: Tue, 5 May 2020 16:50:14 -0400
 Subject: [PATCH 5/5] Revert "Externals: Update minizip search path."
@@ -24,7 +24,7 @@ index 13589dd1b3..8d8bc7d692 100644
  #include "Common/CommonTypes.h"
  #include "Common/ScopeGuard.h"
 diff --git a/Source/Core/DiscIO/VolumeVerifier.cpp b/Source/Core/DiscIO/VolumeVerifier.cpp
-index 00e850071a..f988ad0cbb 100644
+index 04b285cbc4..ecc001075e 100644
 --- a/Source/Core/DiscIO/VolumeVerifier.cpp
 +++ b/Source/Core/DiscIO/VolumeVerifier.cpp
 @@ -18,8 +18,8 @@

@@ -1,4 +1,4 @@
-From 1dcfe2fe173c5ca0ac46103b766f7a329752e396 Mon Sep 17 00:00:00 2001
+From 6c79a787bcbb8f315fb0e5ac3f63c888a8640694 Mon Sep 17 00:00:00 2001
 From: Mystro256 <alexjnewt@hotmail.com>
 Date: Sun, 5 Apr 2020 11:03:31 -0400
 Subject: [PATCH 3/5] soundtouch: Use shorts instead of floats for samples

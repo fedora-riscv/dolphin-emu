@@ -1,4 +1,4 @@
-From d53b58f85abc13f8d82b12aafa24ad932073f119 Mon Sep 17 00:00:00 2001
+From aabeda2181f47c89a08c257d4cdd506ce2482be4 Mon Sep 17 00:00:00 2001
 From: Mystro256 <alexjnewt@hotmail.com>
 Date: Sun, 5 Apr 2020 17:46:52 -0400
 Subject: [PATCH 4/5] soundtounch: disable exceptions

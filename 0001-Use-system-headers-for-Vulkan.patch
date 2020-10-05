@@ -1,4 +1,4 @@
-From 0974371aae2bda84862ea4a9a187d4af84b498c8 Mon Sep 17 00:00:00 2001
+From e0efcf342fe5f14ca9be3bd9674818988f308b01 Mon Sep 17 00:00:00 2001
 From: Mystro256 <alexjnewt@hotmail.com>
 Date: Thu, 12 Mar 2020 13:41:58 -0400
 Subject: [PATCH 1/5] Use system headers for Vulkan
@@ -12,7 +12,7 @@ libraries if detected. This will work in the meantime for Fedora though.
  3 files changed, 118 insertions(+), 14 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 26484938a3..c27b9cd80f 100644
+index ca2b3af6fe..8933cc1558 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -543,7 +543,6 @@ else()
