@@ -146,13 +146,13 @@ cat Data/Sys/GC/font-licenses.txt >> font-licenses.txt
 #Fix for newer vulkan/glslang
 %if 0%{?fedora} > 32
 sed -i "s/VK_PRESENT_MODE_RANGE_SIZE_KHR/(VkPresentModeKHR)("`
-	`"VK_PRESENT_MODE_FIFO_RELAXED_KHR - VK_PRESENT_MODE_IMMEDIATE_KHR + 1)/" \
-	Source/Core/VideoBackends/Vulkan/SwapChain.h
+    `"VK_PRESENT_MODE_FIFO_RELAXED_KHR - VK_PRESENT_MODE_IMMEDIATE_KHR + 1)/" \
+    Source/Core/VideoBackends/Vulkan/SwapChain.h
 sed -i "/maxMeshViewCountNV/ a /* .maxDualSourceDrawBuffersEXT = */ 1," \
-	Source/Core/VideoBackends/Vulkan/ShaderCompiler.cpp
+    Source/Core/VideoBackends/Vulkan/ShaderCompiler.cpp
 sed -i -e "/OSDependent/ a MachineIndependent" \
-	-e "/OSDependent/ a GenericCodeGen" -e "/HLSL/d" \
-	Source/Core/VideoBackends/Vulkan/CMakeLists.txt
+    -e "/OSDependent/ a GenericCodeGen" -e "/HLSL/d" \
+    Source/Core/VideoBackends/Vulkan/CMakeLists.txt
 %endif
 
 ###Remove Bundled:
@@ -183,7 +183,7 @@ popd
 #Note some items are disabled to avoid bundling
 #Set APPROVED_VENDORED_DEPENDENCIES to nothing to safe guard against bundling
 %cmake . \
-	   -DAPPROVED_VENDORED_DEPENDENCIES=";" \
+       -DAPPROVED_VENDORED_DEPENDENCIES=";" \
        -DXXHASH_FOUND=ON \
        -DUSE_SHARED_ENET=ON \
        -DENABLE_ANALYTICS=OFF \
