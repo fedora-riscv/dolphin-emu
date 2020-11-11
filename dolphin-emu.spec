@@ -11,7 +11,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -39,6 +39,7 @@ Patch3:         0003-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
 Patch4:         0004-soundtounch-disable-exceptions.patch
 #This needs to be fixed, I've reverted the patch that breaks minizip
 Patch5:         0005-Revert-Externals-Update-minizip-search-path.patch
+Patch6:         %{name}-gcc11.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -254,6 +255,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Wed Nov 11 2020 Jeff Law <law@redhat.com> - 5.0.12716-2
+- Fix missing #includes for gcc-11
+
 * Mon Oct 05 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-1
 - Update to latest beta version
 
