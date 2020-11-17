@@ -2,6 +2,7 @@
 #I think one of the bundled libraries needs to be static.
 #Static libraries are fine as all of the libraries included are bundled.
 %undefine _cmake_shared_libs
+%define _gcc_lto_cflags -fno-lto
 
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
@@ -11,7 +12,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -255,6 +256,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Tue Nov 17 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-3
+- Disable LTO explicitly, this causes segfaults (RHBZ#1897376)
+
 * Wed Nov 11 2020 Jeff Law <law@redhat.com> - 5.0.12716-2
 - Fix missing #includes for gcc-11
 
