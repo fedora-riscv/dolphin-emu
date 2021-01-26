@@ -12,7 +12,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -256,6 +256,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5.0.12716-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Tue Nov 17 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-3
 - Disable LTO explicitly, this causes segfaults (RHBZ#1897376)
 
