@@ -145,7 +145,7 @@ echo "%{_datadir}/%{name}/Sys/GC:" > font-licenses.txt
 cat Data/Sys/GC/font-licenses.txt >> font-licenses.txt
 
 #Fix for newer vulkan
-%if 0%{?fedora} > 32
+%if 0%{?fedora} > 31
 sed -i "s/VK_PRESENT_MODE_RANGE_SIZE_KHR/(VkPresentModeKHR)("`
     `"VK_PRESENT_MODE_FIFO_RELAXED_KHR - VK_PRESENT_MODE_IMMEDIATE_KHR + 1)/" \
     Source/Core/VideoBackends/Vulkan/SwapChain.h
