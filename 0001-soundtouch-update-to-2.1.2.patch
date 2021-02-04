@@ -1,7 +1,7 @@
-From aad372842600887029adc894b0d85728ea37b3a5 Mon Sep 17 00:00:00 2001
+From d311fe03a57368290031bbf927a4e68cd20dc4f0 Mon Sep 17 00:00:00 2001
 From: Mystro256 <alexjnewt@hotmail.com>
 Date: Sun, 5 Apr 2020 10:56:07 -0400
-Subject: [PATCH 2/5] soundtounch: update to 2.1.2
+Subject: [PATCH 1/4] soundtouch: update to 2.1.2
 
 Note that soundtouch_config.h is a custom file.
 ---
@@ -3100,7 +3100,7 @@ index 54703d9808..c621cf1e1d 100644
 +
 +#endif
 diff --git a/Externals/soundtouch/PeakFinder.cpp b/Externals/soundtouch/PeakFinder.cpp
-index 111cc88bbd..34db39bc23 100644
+index b1e2205c3f..34db39bc23 100644
 --- a/Externals/soundtouch/PeakFinder.cpp
 +++ b/Externals/soundtouch/PeakFinder.cpp
 @@ -11,13 +11,6 @@
@@ -3121,7 +3121,7 @@ index 111cc88bbd..34db39bc23 100644
  
      refvalue = data[peakpos];
  
--    // seek within ±10 points
+-    // seek within Â±10 points
 +    // seek within ï¿½10 points
      start = peakpos - 10;
      if (start < minPos) start = minPos;
@@ -3170,7 +3170,7 @@ index 111cc88bbd..34db39bc23 100644
  
          // accept harmonic peak if 
          // (a) it is found
--        // (b) is within ±4% of the expected harmonic interval
+-        // (b) is within Â±4% of the expected harmonic interval
 +        // (b) is within ï¿½4% of the expected harmonic interval
          // (c) has at least half x-corr value of the max. peak
  
@@ -4406,5 +4406,5 @@ index 490d0d2080..0dc637015f 100644
  //
  //  SoundTouch audio processing library
 -- 
-2.26.2
+2.29.2
 

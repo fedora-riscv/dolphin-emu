@@ -7,12 +7,12 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 31524288e3b2450eaefff8202c6d26c4ba3f7333
-%global snapnumber 12716
+%global commit f9deb68aee962564b1495ff04c54c015e58d086f
+%global snapnumber 13669
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        5%{?dist}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -31,19 +31,13 @@ Url:            https://dolphin-emu.org/
 License:        GPLv2+ and BSD and MIT and zlib
 Source0:        https://github.com/%{name}/dolphin/archive/%{commit}/%{name}-%{version}.tar.gz
 Source1:        %{name}.appdata.xml
-#Can't be upstreamed as-is, needs rework:
-Patch1:         0001-Use-system-headers-for-Vulkan.patch
 #Update soundtouch:
 #https://github.com/dolphin-emu/dolphin/pull/8725
-Patch2:         0002-soundtounch-update-to-2.1.2.patch
-Patch3:         0003-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
-Patch4:         0004-soundtounch-disable-exceptions.patch
+Patch2:         0001-soundtouch-update-to-2.1.2.patch
+Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
+Patch4:         0003-soundtouch-disable-exceptions.patch
 #This needs to be fixed, I've reverted the patch that breaks minizip
-Patch5:         0005-Revert-Externals-Update-minizip-search-path.patch
-#Fixes for GCC 11
-Patch6:         %{name}-gcc11.patch
-#https://github.com/dolphin-emu/dolphin/pull/9498
-Patch7:         0001-Core-DSP-Fix-improper-uses-of-offsetof.patch
+Patch5:         0004-Revert-Externals-Update-minizip-search-path.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -57,6 +51,8 @@ Provides:       bundled(rangeset)
 Provides:       bundled(soundtouch) = 2.1.2
 #dolphin uses tests not included in upstream gtest (possibly unbundle later):
 Provides:       bundled(gtest) = 1.9.0
+#This is hard to unbundle and is unmaintainable with little benefit:
+Provides:       bundled(glslang)
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -69,7 +65,6 @@ BuildRequires:  cmake
 BuildRequires:  cubeb-devel
 BuildRequires:  enet-devel
 BuildRequires:  fmt-devel >= 6.0.0
-BuildRequires:  glslang-devel
 BuildRequires:  hidapi-devel
 BuildRequires:  libao-devel
 BuildRequires:  libcurl-devel
@@ -118,7 +113,7 @@ Requires:       %{name}-data = %{version}-%{release}
 %description
 Dolphin is a Gamecube, Wii and Triforce (the arcade machine based on the
 Gamecube) emulator, which supports full HD video with several enhancements such
-as compatibility with all PC controllers, turbo speed, networked multiplayer,
+as compatibility with all PC controllers, turbo speed, networked multi player,
 and more.
 Most games run perfectly or with minor bugs.
 
@@ -149,21 +144,14 @@ echo "%{_datadir}/%{name}/Sys/GC:" > font-licenses.txt
 cat Data/Sys/GC/font-licenses.txt >> font-licenses.txt
 
 #Fix for newer vulkan
-%if 0%{?fedora} > 31
 sed -i "s/VK_PRESENT_MODE_RANGE_SIZE_KHR/(VkPresentModeKHR)("`
     `"VK_PRESENT_MODE_FIFO_RELAXED_KHR - VK_PRESENT_MODE_IMMEDIATE_KHR + 1)/" \
-    Source/Core/VideoBackends/Vulkan/SwapChain.h
-sed -i "/maxMeshViewCountNV/ a /* .maxDualSourceDrawBuffersEXT = */ 1," \
-    Source/Core/VideoBackends/Vulkan/ShaderCompiler.cpp
-sed -i -e "/OSDependent/ a MachineIndependent" \
-    -e "/OSDependent/ a GenericCodeGen" -e "/HLSL/d" \
-    Source/Core/VideoBackends/Vulkan/CMakeLists.txt
-%endif
+    Source/Core/VideoBackends/Vulkan/VKSwapChain.h
 
 ###Remove Bundled:
 cd Externals
 #Keep what we need...
-rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson' | grep -v 'gtest' | grep -v 'rangeset'`
+rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson' | grep -v 'gtest' | grep -v 'rangeset' | grep -v 'glslang'`
 #Remove Bundled Bochs source and replace with links (for x86 only):
 %ifarch x86_64
 pushd Bochs_disasm
@@ -259,6 +247,10 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Mon Feb 15 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.13669-1
+- Update to 5.0-13669
+- Rebundle glslang, it seems I was originally right, but only for 5.0-13178+
+
 * Fri Feb 05 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-5
 - Unbundle glslang, it seems I had the wrong impression, reverting this change
 
