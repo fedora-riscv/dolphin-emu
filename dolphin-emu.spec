@@ -12,7 +12,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -31,6 +31,8 @@ Url:            https://dolphin-emu.org/
 License:        GPLv2+ and BSD and MIT and zlib
 Source0:        https://github.com/%{name}/dolphin/archive/%{commit}/%{name}-%{version}.tar.gz
 Source1:        %{name}.appdata.xml
+#Can't be upstreamed as-is, needs rework:
+Patch1:         0001-Use-system-headers-for-Vulkan.patch
 #Update soundtouch:
 #https://github.com/dolphin-emu/dolphin/pull/8725
 Patch2:         0002-soundtounch-update-to-2.1.2.patch
@@ -52,8 +54,6 @@ Provides:       bundled(rangeset)
 Provides:       bundled(soundtouch) = 2.1.2
 #dolphin uses tests not included in upstream gtest (possibly unbundle later):
 Provides:       bundled(gtest) = 1.9.0
-#This static library is too unstable to unbundle:
-Provides:       bundled(glslang)
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -66,6 +66,7 @@ BuildRequires:  cmake
 BuildRequires:  cubeb-devel
 BuildRequires:  enet-devel
 BuildRequires:  fmt-devel >= 6.0.0
+BuildRequires:  glslang-devel
 BuildRequires:  hidapi-devel
 BuildRequires:  libao-devel
 BuildRequires:  libcurl-devel
@@ -159,7 +160,7 @@ sed -i -e "/OSDependent/ a MachineIndependent" \
 ###Remove Bundled:
 cd Externals
 #Keep what we need...
-rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson' | grep -v 'gtest' | grep -v 'rangeset' | grep -v 'glslang'`
+rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson' | grep -v 'gtest' | grep -v 'rangeset'`
 #Remove Bundled Bochs source and replace with links (for x86 only):
 %ifarch x86_64
 pushd Bochs_disasm
@@ -255,6 +256,8 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Fri Feb 05 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-5
+- Unbundle glslang, it seems I had the wrong impression, reverting this change
 
 * Thu Feb 04 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-4
 - Bundle glslang, this is too difficult to keep unbundled with little benefit
