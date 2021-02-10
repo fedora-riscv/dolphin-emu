@@ -22,3 +22,15 @@ index 20d19c4..b3bfb64 100644
  #include <algorithm>
  #include <cstddef>
  #include <cstring>
+diff --git a/Externals/rangeset/include/rangeset/rangesizeset.h b/Externals/rangeset/include/rangeset/rangesizeset.h
+index 8519209863..92125de00c 100644
+--- a/Externals/rangeset/include/rangeset/rangesizeset.h
++++ b/Externals/rangeset/include/rangeset/rangesizeset.h
+@@ -3,6 +3,7 @@
+ #include <cassert>
+ #include <map>
+ #include <type_traits>
++#include <cstddef>
+ 
+ namespace HyoutaUtilities {
+ // Like RangeSet, but additionally stores a map of the ranges sorted by their size, for quickly finding the largest or

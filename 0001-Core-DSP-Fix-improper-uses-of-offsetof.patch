@@ -1,0 +1,119 @@
+From b28b78bb779d67913d086d86fcbe983bca65586d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?L=C3=A9o=20Lam?= <leo@leolam.fr>
+Date: Wed, 10 Feb 2021 01:56:14 +0100
+Subject: [PATCH] Core/DSP: Fix improper uses of offsetof
+
+According to the C standard, an offsetof expression must evaluate to an
+address constant, otherwise it's undefined behavior.
+
+Fixes https://bugs.dolphin-emu.org/issues/12409
+
+See also https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95942
+
+There are still improper uses of offsetof (mostly in JitArm64) but
+fixing that will take more effort since there's a PPCSTATE_OFF wrapper
+macro that is sometimes used with non-array members and sometimes used
+with arrays and variable indices... Let's keep that for another PR.
+---
+ Source/Core/Core/DSP/Jit/x64/DSPEmitter.cpp   |  5 +--
+ .../Core/Core/DSP/Jit/x64/DSPJitRegCache.cpp  | 33 ++++++++++++-------
+ 2 files changed, 25 insertions(+), 13 deletions(-)
+
+diff --git a/Source/Core/Core/DSP/Jit/x64/DSPEmitter.cpp b/Source/Core/Core/DSP/Jit/x64/DSPEmitter.cpp
+index 24a2f2a1c8..0df228484c 100644
+--- a/Source/Core/Core/DSP/Jit/x64/DSPEmitter.cpp
++++ b/Source/Core/Core/DSP/Jit/x64/DSPEmitter.cpp
+@@ -475,12 +475,13 @@ Gen::OpArg DSPEmitter::M_SDSP_external_interrupt_waiting()
+ 
+ Gen::OpArg DSPEmitter::M_SDSP_r_st(size_t index)
+ {
+-  return MDisp(R15, static_cast<int>(offsetof(SDSP, r.st[index])));
++  return MDisp(R15, static_cast<int>(offsetof(SDSP, r.st) + sizeof(SDSP::r.st[0]) * index));
+ }
+ 
+ Gen::OpArg DSPEmitter::M_SDSP_reg_stack_ptrs(size_t index)
+ {
+-  return MDisp(R15, static_cast<int>(offsetof(SDSP, reg_stack_ptrs[index])));
++  return MDisp(R15, static_cast<int>(offsetof(SDSP, reg_stack_ptrs) +
++                                     sizeof(SDSP::reg_stack_ptrs[0]) * index));
+ }
+ 
+ }  // namespace DSP::JIT::x64
+diff --git a/Source/Core/Core/DSP/Jit/x64/DSPJitRegCache.cpp b/Source/Core/Core/DSP/Jit/x64/DSPJitRegCache.cpp
+index 2b2850fe36..cec3e0526e 100644
+--- a/Source/Core/Core/DSP/Jit/x64/DSPJitRegCache.cpp
++++ b/Source/Core/Core/DSP/Jit/x64/DSPJitRegCache.cpp
+@@ -31,25 +31,30 @@ static Gen::OpArg GetRegisterPointer(size_t reg)
+   case DSP_REG_AR1:
+   case DSP_REG_AR2:
+   case DSP_REG_AR3:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ar[reg - DSP_REG_AR0])));
++    return MDisp(
++        R15, static_cast<int>(offsetof(SDSP, r.ar) + sizeof(SDSP::r.ar[0]) * (reg - DSP_REG_AR0)));
+   case DSP_REG_IX0:
+   case DSP_REG_IX1:
+   case DSP_REG_IX2:
+   case DSP_REG_IX3:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ix[reg - DSP_REG_IX0])));
++    return MDisp(
++        R15, static_cast<int>(offsetof(SDSP, r.ix) + sizeof(SDSP::r.ix[0]) * (reg - DSP_REG_IX0)));
+   case DSP_REG_WR0:
+   case DSP_REG_WR1:
+   case DSP_REG_WR2:
+   case DSP_REG_WR3:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.wr[reg - DSP_REG_WR0])));
++    return MDisp(
++        R15, static_cast<int>(offsetof(SDSP, r.wr) + sizeof(SDSP::r.wr[0]) * (reg - DSP_REG_WR0)));
+   case DSP_REG_ST0:
+   case DSP_REG_ST1:
+   case DSP_REG_ST2:
+   case DSP_REG_ST3:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.st[reg - DSP_REG_ST0])));
++    return MDisp(
++        R15, static_cast<int>(offsetof(SDSP, r.st) + sizeof(SDSP::r.st[0]) * (reg - DSP_REG_ST0)));
+   case DSP_REG_ACH0:
+   case DSP_REG_ACH1:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ac[reg - DSP_REG_ACH0].h)));
++    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ac[0].h) +
++                                       sizeof(SDSP::r.ac[0]) * (reg - DSP_REG_ACH0)));
+   case DSP_REG_CR:
+     return MDisp(R15, static_cast<int>(offsetof(SDSP, r.cr)));
+   case DSP_REG_SR:
+@@ -64,22 +69,28 @@ static Gen::OpArg GetRegisterPointer(size_t reg)
+     return MDisp(R15, static_cast<int>(offsetof(SDSP, r.prod.m2)));
+   case DSP_REG_AXL0:
+   case DSP_REG_AXL1:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ax[reg - DSP_REG_AXL0].l)));
++    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ax[0].l) +
++                                       sizeof(SDSP::r.ax[0]) * (reg - DSP_REG_AXL0)));
+   case DSP_REG_AXH0:
+   case DSP_REG_AXH1:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ax[reg - DSP_REG_AXH0].h)));
++    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ax[0].h) +
++                                       sizeof(SDSP::r.ax[0]) * (reg - DSP_REG_AXH0)));
+   case DSP_REG_ACL0:
+   case DSP_REG_ACL1:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ac[reg - DSP_REG_ACL0].l)));
++    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ac[0].l) +
++                                       sizeof(SDSP::r.ac[0]) * (reg - DSP_REG_ACL0)));
+   case DSP_REG_ACM0:
+   case DSP_REG_ACM1:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ac[reg - DSP_REG_ACM0].m)));
++    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ac[0].m) +
++                                       sizeof(SDSP::r.ac[0]) * (reg - DSP_REG_ACM0)));
+   case DSP_REG_AX0_32:
+   case DSP_REG_AX1_32:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ax[reg - DSP_REG_AX0_32].val)));
++    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ax[0].val) +
++                                       sizeof(SDSP::r.ax[0]) * (reg - DSP_REG_AX0_32)));
+   case DSP_REG_ACC0_64:
+   case DSP_REG_ACC1_64:
+-    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ac[reg - DSP_REG_ACC0_64].val)));
++    return MDisp(R15, static_cast<int>(offsetof(SDSP, r.ac[0].val) +
++                                       sizeof(SDSP::r.ac[0]) * (reg - DSP_REG_ACC0_64)));
+   case DSP_REG_PROD_64:
+     return MDisp(R15, static_cast<int>(offsetof(SDSP, r.prod.val)));
+   default:
+-- 
+2.29.2
+

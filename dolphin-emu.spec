@@ -40,7 +40,10 @@ Patch3:         0003-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
 Patch4:         0004-soundtounch-disable-exceptions.patch
 #This needs to be fixed, I've reverted the patch that breaks minizip
 Patch5:         0005-Revert-Externals-Update-minizip-search-path.patch
+#Fixes for GCC 11
 Patch6:         %{name}-gcc11.patch
+#https://github.com/dolphin-emu/dolphin/pull/9498
+Patch7:         0001-Core-DSP-Fix-improper-uses-of-offsetof.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -256,10 +259,10 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
-* Fri Feb 05 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-5
+* Fri Feb 05 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-5
 - Unbundle glslang, it seems I had the wrong impression, reverting this change
 
-* Thu Feb 04 2020 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-4
+* Thu Feb 04 2021 Jeremy Newton <alexjnewt at hotmail dot com>
 - Bundle glslang, this is too difficult to keep unbundled with little benefit
 
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5.0.12716-4
