@@ -10,6 +10,13 @@
 %global commit f9deb68aee962564b1495ff04c54c015e58d086f
 %global snapnumber 13669
 
+#JIT is only supported on x86_64 and aarch64:
+%ifarch x86_64 aarch64
+%global disablejit OFF
+%else
+%global disablejit ON
+%endif
+
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
 Release:        1%{?dist}
@@ -103,7 +110,8 @@ BuildRequires:  libappstream-glib
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  /usr/bin/env
 
-#Only the following architectures are supported:
+#Only the following architectures are supported (64bit little endian only):
+#Note that ppc64le is disabled due to unit test failures
 ExclusiveArch:  x86_64 aarch64
 
 Requires:       hicolor-icon-theme
@@ -178,6 +186,7 @@ popd
 %cmake . \
        -DAPPROVED_VENDORED_DEPENDENCIES=";" \
        -DXXHASH_FOUND=ON \
+       -DENABLE_GENERIC=%{disablejit} \
        -DUSE_SHARED_ENET=ON \
        -DENABLE_ANALYTICS=OFF \
        -DENCODE_FRAMEDUMPS=OFF \
