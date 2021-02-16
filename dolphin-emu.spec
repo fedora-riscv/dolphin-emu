@@ -12,14 +12,12 @@
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
-%global disablejit OFF
-%else
-%global disablejit ON
+%global enablejit 1
 %endif
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -115,8 +113,7 @@ BuildRequires:  hicolor-icon-theme
 BuildRequires:  /usr/bin/env
 
 #Only the following architectures are supported (64bit little endian only):
-#Note that ppc64le is disabled due to unit test failures
-ExclusiveArch:  x86_64 aarch64
+ExclusiveArch:  x86_64 aarch64 ppc64le
 
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
@@ -160,6 +157,12 @@ sed -i "s/VK_PRESENT_MODE_RANGE_SIZE_KHR/(VkPresentModeKHR)("`
     `"VK_PRESENT_MODE_FIFO_RELAXED_KHR - VK_PRESENT_MODE_IMMEDIATE_KHR + 1)/" \
     Source/Core/VideoBackends/Vulkan/VKSwapChain.h
 
+#This test fails without JIT enabled:
+#https://bugs.dolphin-emu.org/issues/12421
+%if ! 0%{?enablejit}
+sed -i "/PageFaultTest/d" Source/UnitTests/Core/CMakeLists.txt
+%endif
+
 ###Remove Bundled:
 cd Externals
 #Keep what we need...
@@ -190,7 +193,7 @@ popd
 %cmake . \
        -DAPPROVED_VENDORED_DEPENDENCIES=";" \
        -DXXHASH_FOUND=ON \
-       -DENABLE_GENERIC=%{disablejit} \
+       %{?!enablejit:-DENABLE_GENERIC=ON} \
        -DUSE_SHARED_ENET=ON \
        -DENABLE_ANALYTICS=OFF \
        -DENCODE_FRAMEDUMPS=OFF \
@@ -260,6 +263,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Tue Feb 16 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.13603-2
+- Add ppc64le build support (dolphin should work on any 64bit LE cpu)
+
 * Mon Feb 15 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.13603-1
 - Update to 5.0-13603
 - Rebundle glslang, it seems I was originally right, but only for 5.0-13178+
