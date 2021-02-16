@@ -7,8 +7,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit f9deb68aee962564b1495ff04c54c015e58d086f
-%global snapnumber 13669
+%global commit 7250d6e4e091f4b5b4f2289c2c732349b69a2e8a
+%global snapnumber 13603
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
@@ -45,6 +45,10 @@ Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
 Patch4:         0003-soundtouch-disable-exceptions.patch
 #This needs to be fixed, I've reverted the patch that breaks minizip
 Patch5:         0004-Revert-Externals-Update-minizip-search-path.patch
+
+#https://github.com/dolphin-emu/dolphin/pull/9498
+Patch6:         0001-Core-DSP-Fix-improper-uses-of-offsetof.patch
+Patch7:         0001-JitArm64-Fix-improper-uses-of-offsetof.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -256,8 +260,8 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
-* Mon Feb 15 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.13669-1
-- Update to 5.0-13669
+* Mon Feb 15 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.13603-1
+- Update to 5.0-13603
 - Rebundle glslang, it seems I was originally right, but only for 5.0-13178+
 
 * Fri Feb 05 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.12716-5
