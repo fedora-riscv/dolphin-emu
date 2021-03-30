@@ -17,7 +17,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -263,6 +263,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Tue Mar 30 2021 Jonathan Wakely <jwakely@redhat.com> - 5.0.13603-3
+- Rebuilt for removed libstdc++ symbol (#1937698)
+
 * Tue Feb 16 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.13603-2
 - Add ppc64le build support (dolphin should work on any 64bit LE cpu)
 
