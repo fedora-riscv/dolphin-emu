@@ -7,8 +7,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 7250d6e4e091f4b5b4f2289c2c732349b69a2e8a
-%global snapnumber 13603
+%global commit 5513d5f4f732fb1e436765ab87e7d60ba02b1ad6
+%global snapnumber 13963
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
@@ -17,7 +17,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -43,10 +43,6 @@ Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
 Patch4:         0003-soundtouch-disable-exceptions.patch
 #This needs to be fixed, I've reverted the patch that breaks minizip
 Patch5:         0004-Revert-Externals-Update-minizip-search-path.patch
-
-#https://github.com/dolphin-emu/dolphin/pull/9498
-Patch6:         0001-Core-DSP-Fix-improper-uses-of-offsetof.patch
-Patch7:         0001-JitArm64-Fix-improper-uses-of-offsetof.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -263,6 +259,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Tue Apr 06 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.13963-1
+- Update to 5.0-113963
+
 * Tue Mar 30 2021 Jonathan Wakely <jwakely@redhat.com> - 5.0.13603-3
 - Rebuilt for removed libstdc++ symbol (#1937698)
 
