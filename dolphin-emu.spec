@@ -108,8 +108,8 @@ BuildRequires:  libappstream-glib
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  /usr/bin/env
 
-#Only the following architectures are supported (64bit little endian only):
-ExclusiveArch:  x86_64 aarch64 ppc64le
+#Only the following architectures are supported:
+ExclusiveArch:  x86_64 aarch64
 
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
