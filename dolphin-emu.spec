@@ -17,7 +17,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -259,6 +259,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Mon Jul 05 2021 Richard Shaw <hobbes1069@gmail.com> - 5.0.14344-2
+- Rebuild for new fmt version.
+
 * Mon Jun 07 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.14344-1
 - Update to 5.0-14344
 
