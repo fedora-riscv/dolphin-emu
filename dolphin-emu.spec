@@ -7,8 +7,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit acc7d3710d60552769f61f4b44bc8533a940df36
-%global snapnumber 14344
+%global commit 3cc274880f47d340bd508dba91aaf37c48acd367
+%global snapnumber 14790
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
@@ -58,14 +58,16 @@ Provides:       bundled(soundtouch) = 2.1.2
 Provides:       bundled(gtest) = 1.9.0
 #This is hard to unbundle and is unmaintainable with little benefit:
 Provides:       bundled(glslang)
+#dolphin uses a very old bochs, which is impatible with f35+'s bochs.
+#We could rework dolphin to use latest, but this requires a lot of work.
+#Furthermore, the dolphin gtest test cases that fail with f33/34 bochs
+#My best guess is that this is 2.6.6, as dolphin does not specify
+Provides:       bundled(bochs) = 2.6.6
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  alsa-lib-devel
 BuildRequires:  bluez-libs-devel
-%ifarch x86_64
-BuildRequires:  bochs-devel
-%endif
 BuildRequires:  cmake
 BuildRequires:  cubeb-devel
 BuildRequires:  enet-devel
@@ -163,18 +165,6 @@ sed -i "/PageFaultTest/d" Source/UnitTests/Core/CMakeLists.txt
 cd Externals
 #Keep what we need...
 rm -rf `ls | grep -v 'Bochs' | grep -v 'FreeSurround' | grep -v 'imgui' | grep -v 'cpp-optparse' | grep -v 'soundtouch' | grep -v 'picojson' | grep -v 'gtest' | grep -v 'rangeset' | grep -v 'glslang'`
-#Remove Bundled Bochs source and replace with links (for x86 only):
-%ifarch x86_64
-pushd Bochs_disasm
-rm -rf `ls | grep -v 'stdafx' | grep -v 'CMakeLists.txt'`
-ln -s %{_includedir}/bochs/* ./
-ln -s %{_includedir}/bochs/disasm/* ./
-popd
-#FIXME: This test fails because we unbundle bochs
-sed -i "/x64EmitterTest/d" ../Source/UnitTests/Common/CMakeLists.txt
-%else
-rm -rf Bochs_disasm
-%endif
 #Replace bundled picojson with a modified system copy (remove use of throw)
 pushd picojson
 rm picojson.h
@@ -189,6 +179,7 @@ popd
 %cmake . \
        -DAPPROVED_VENDORED_DEPENDENCIES=";" \
        -DXXHASH_FOUND=ON \
+       -DUSE_MGBA=OFF \
        %{?!enablejit:-DENABLE_GENERIC=ON} \
        -DUSE_SHARED_ENET=ON \
        -DENABLE_ANALYTICS=OFF \
@@ -230,7 +221,7 @@ appstream-util validate-relax --nonet \
 
 %files -f %{name}.lang
 %doc Readme.md
-%license license.txt
+%license Data/license.txt
 %attr(755, root, root) %{_bindir}/%{name}
 %{_bindir}/%{name}-x11
 %{_mandir}/man6/%{name}.*
@@ -243,13 +234,13 @@ appstream-util validate-relax --nonet \
 
 %files nogui
 %doc Readme.md
-%license license.txt
+%license Data/license.txt
 %{_bindir}/%{name}-nogui
 %{_mandir}/man6/%{name}-nogui.*
 
 %files data
 %doc Readme.md docs/gc-font-tool.cpp
-%license license.txt font-licenses.txt
+%license Data/license.txt font-licenses.txt
 #For the gui package:
 %exclude %{_datadir}/%{name}/sys/Resources/
 %exclude %{_datadir}/%{name}/sys/Themes/
@@ -259,6 +250,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Wed Aug 04 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.14790-1
+- Update to 5.0-14790
+
 * Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5.0.14344-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
