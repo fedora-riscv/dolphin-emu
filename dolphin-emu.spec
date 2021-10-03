@@ -7,8 +7,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 3cc274880f47d340bd508dba91aaf37c48acd367
-%global snapnumber 14790
+%global commit 4b8b53ac732645f6c0fd3f4b11733cb3d86c9c41
+%global snapnumber 15105
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
@@ -17,7 +17,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -250,6 +250,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Sat Oct 02 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.15105-1
+- Update to 5.0-15105
+
 * Wed Aug 04 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.14790-1
 - Update to 5.0-14790
 
