@@ -7,8 +7,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 4b8b53ac732645f6c0fd3f4b11733cb3d86c9c41
-%global snapnumber 15105
+%global commit db02b50d2ecdfbbc21e19aadc57253c353069f77
+%global snapnumber 15445
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
@@ -250,6 +250,9 @@ appstream-util validate-relax --nonet \
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
 %changelog
+* Tue Nov 23 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.15445-1
+- Update to 5.0-15445
+
 * Sat Oct 02 2021 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.15105-1
 - Update to 5.0-15105
 
