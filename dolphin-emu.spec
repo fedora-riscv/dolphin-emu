@@ -7,8 +7,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit db02b50d2ecdfbbc21e19aadc57253c353069f77
-%global snapnumber 15445
+%global commit 7b8e846d0ab1a95c4070c3d89e38180895e536c6
+%global snapnumber 15920
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
@@ -17,7 +17,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -41,8 +41,6 @@ Source1:        %{name}.appdata.xml
 Patch2:         0001-soundtouch-update-to-2.1.2.patch
 Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
 Patch4:         0003-soundtouch-disable-exceptions.patch
-#This needs to be fixed, I've reverted the patch that breaks minizip
-Patch5:         0004-Revert-Externals-Update-minizip-search-path.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -131,6 +129,13 @@ Requires:       %{name}-data = %{version}-%{release}
 %description nogui
 Dolphin Emulator without a graphical user interface.
 
+%package tool
+Summary:        Dolphin Emulator CLI utility
+
+%description tool
+This package provides "dolphin-tool", which is a CLI-based utility for
+functions such as managing disc images.
+
 %package data
 Summary:        Dolphin Emulator data files
 BuildArch:      noarch
@@ -149,6 +154,12 @@ sed -i '/CMAKE_C.*_FLAGS/d' CMakeLists.txt
 #Font license, drop the install directory into thie file
 echo "%{_datadir}/%{name}/Sys/GC:" > font-licenses.txt
 cat Data/Sys/GC/font-licenses.txt >> font-licenses.txt
+
+#Fix for minizip install path
+sed -i 's|<unzip.h>|<minizip/unzip.h>|' \
+    Source/Core/*/*.h \
+    Source/Core/*/*.cpp \
+    Source/Core/*/*/*.cpp
 
 #Fix for newer vulkan
 sed -i "s/VK_PRESENT_MODE_RANGE_SIZE_KHR/(VkPresentModeKHR)("`
@@ -249,7 +260,17 @@ appstream-util validate-relax --nonet \
 %{_datadir}/%{name}
 %{_udevrulesdir}/51-dolphin-usb-device.rules
 
+%files tool
+%doc Readme.md
+%license Data/license.txt
+%{_bindir}/dolphin-tool
+
 %changelog
+* Wed Jan 26 2022 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.15920-1
+- Update to 5.0-15920 to fix FTBFS on Fedora 35+ (fmt 8.1)
+- Add new dolphin tool package
+- Move minizip patch to using sed in prep
+
 * Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 5.0.15445-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
