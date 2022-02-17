@@ -7,8 +7,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 7b8e846d0ab1a95c4070c3d89e38180895e536c6
-%global snapnumber 15920
+%global commit 5e595616379a694789fe749e40a27ef069f0090e
+%global snapnumber 15993
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
@@ -266,6 +266,9 @@ appstream-util validate-relax --nonet \
 %{_bindir}/dolphin-tool
 
 %changelog
+* Thu Feb 17 2022 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.15993-1
+- Update to 5.0-15993
+
 * Wed Jan 26 2022 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.15920-1
 - Update to 5.0-15920 to fix FTBFS on Fedora 35+ (fmt 8.1)
 - Add new dolphin tool package
