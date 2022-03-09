@@ -187,7 +187,7 @@ popd
 #Script to find xxhash is not implemented, just tell cmake it was found
 #Note some items are disabled to avoid bundling
 #Set APPROVED_VENDORED_DEPENDENCIES to nothing to safe guard against bundling
-%cmake . \
+%cmake \
        -DAPPROVED_VENDORED_DEPENDENCIES=";" \
        -DXXHASH_FOUND=ON \
        -DUSE_MGBA=OFF \
