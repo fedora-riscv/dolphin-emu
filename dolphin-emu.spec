@@ -75,7 +75,7 @@ BuildRequires:  libao-devel
 BuildRequires:  libcurl-devel
 BuildRequires:  libevdev-devel
 BuildRequires:  libpng-devel
-BuildRequires:  libusb-devel
+BuildRequires:  libusb-compat-0.1-devel
 BuildRequires:  libXi-devel
 BuildRequires:  libXrandr-devel
 BuildRequires:  libzstd-devel
