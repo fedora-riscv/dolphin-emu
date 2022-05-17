@@ -7,8 +7,8 @@
 #Dolphin now uses gitsnapshots for it's versions.
 #See upstream release notes for this snapshot:
 #https://dolphin-emu.org/download/dev/$commit
-%global commit 5e595616379a694789fe749e40a27ef069f0090e
-%global snapnumber 15993
+%global commit 8335ec70e5fe253eb21509408ca6b5736ed57dfc
+%global snapnumber 16380
 
 #JIT is only supported on x86_64 and aarch64:
 %ifarch x86_64 aarch64
@@ -17,7 +17,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -37,10 +37,8 @@ License:        GPLv2+ and BSD and MIT and zlib
 Source0:        https://github.com/%{name}/dolphin/archive/%{commit}/%{name}-%{version}.tar.gz
 Source1:        %{name}.appdata.xml
 #Update soundtouch:
-#https://github.com/dolphin-emu/dolphin/pull/8725
-Patch2:         0001-soundtouch-update-to-2.1.2.patch
-Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
-Patch4:         0003-soundtouch-disable-exceptions.patch
+#https://github.com/dolphin-emu/dolphin/pull/10671
+Patch1:         0001-Update-to-soundtouch-2.3.1.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -51,7 +49,7 @@ Provides:       bundled(cpp-argparse)
 #https://github.com/AdmiralCurtiss/rangeset
 Provides:       bundled(rangeset)
 #soundtouch cannot be unbundled easily, as it requires compile time changes:
-Provides:       bundled(soundtouch) = 2.1.2
+Provides:       bundled(soundtouch) = 2.3.1
 #dolphin uses tests not included in upstream gtest (possibly unbundle later):
 Provides:       bundled(gtest) = 1.9.0
 #This is hard to unbundle and is unmaintainable with little benefit:
@@ -266,6 +264,10 @@ appstream-util validate-relax --nonet \
 %{_bindir}/dolphin-tool
 
 %changelog
+* Tue May 17 2022 Jeremy Newton <alexjnewt at hotmail dot com> - 5.0.16380-1
+- Update to 5.0-16380
+- Update bundled soundtouch to 2.3.1
+
 * Tue May 17 2022 Jan Grulich <jgrulich@redhat.com> - 5.0.15993-3
 - Rebuild (qt5)
 
