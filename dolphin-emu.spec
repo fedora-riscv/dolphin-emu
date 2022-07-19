@@ -17,7 +17,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -39,6 +39,11 @@ Source1:        %{name}.appdata.xml
 #Update soundtouch:
 #https://github.com/dolphin-emu/dolphin/pull/10671
 Patch1:         0001-Update-to-soundtouch-2.3.1.patch
+# FMT-9 changes: both upstream
+# https://github.com/dolphin-emu/dolphin/commit/fa17153ebc83cbc0ae7a1d7430d9509db0c6e0d6
+Patch2:         0002-fmt9-use-make_format_args.patch
+# https://github.com/dolphin-emu/dolphin/commit/66f330e57316257fe81b46f57dad22ea6dee7bae
+Patch3:         0003-fmt9-is_compile_string-namespace.patch
 
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
@@ -264,6 +269,9 @@ appstream-util validate-relax --nonet \
 %{_bindir}/dolphin-tool
 
 %changelog
+* Tue Jul 19 2022 Mamoru TASAKA <mtasaka@fedoraproject.org> - 5.0.16380-4
+- Backport upstream fix for supporting fmt-9
+
 * Thu Jul 14 2022 Jan Grulich <jgrulich@redhat.com> - 5.0.16380-3
 - Rebuild (qt5)
 
