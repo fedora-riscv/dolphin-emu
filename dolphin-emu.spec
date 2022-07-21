@@ -17,7 +17,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -269,6 +269,9 @@ appstream-util validate-relax --nonet \
 %{_bindir}/dolphin-tool
 
 %changelog
+* Thu Jul 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 5.0.16380-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
 * Tue Jul 19 2022 Mamoru TASAKA <mtasaka@fedoraproject.org> - 5.0.16380-4
 - Backport upstream fix for supporting fmt-9
 
