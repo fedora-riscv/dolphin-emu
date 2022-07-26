@@ -42,6 +42,8 @@ Patch2:         0001-soundtouch-update-to-2.1.2.patch
 Patch3:         0002-soundtouch-Use-shorts-instead-of-floats-for-samples.patch
 Patch4:         0003-soundtouch-disable-exceptions.patch
 
+Patch10:        dolphin-emu-gcc12.patch
+
 ##Bundled code ahoy
 #The following isn't in Fedora yet:
 Provides:       bundled(FreeSurround)
