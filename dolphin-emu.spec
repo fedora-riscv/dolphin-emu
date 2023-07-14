@@ -46,17 +46,21 @@ Source5:        https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocato
 
 Patch0:         https://github.com/dolphin-emu/dolphin/pull/11747/commits/6dad8f837285c32720efa8fcd28de4d197f27611.patch
 
-###Bundled code ahoy, I've added versions and upstream urls when known
+###Bundled code ahoy, I've added my best guess for versions and upstream urls
 ##The following isn't in Fedora yet:
+#https://github.com/weisslj/cpp-optparse
 Provides:       bundled(cpp-argparse)
 Provides:       bundled(expr)
+#http://elm-chan.org/fsw/ff/00index_e.html
 Provides:       bundled(FatFs) = 0.14b
 Provides:       bundled(FreeSurround)
+#https://github.com/ocornut/imgui
 Provides:       bundled(imgui) = 1.70
-#https://github.com/epezent/implot
-Provides:       bundled(implot) = 0.14
 #https://github.com/AdmiralCurtiss/rangeset
 Provides:       bundled(rangeset)
+##These are not in fedora, but are easy to keep up to date (see sources):
+#https://github.com/epezent/implot
+Provides:       bundled(implot) = 0.14
 #https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 Provides:       bundled(VulkanMemoryAllocator) = 3.0.1
 ##The hard to unbundle
