@@ -1,0 +1,12 @@
+diff --git a/Source/Core/Common/Logging/Log.h b/Source/Core/Common/Logging/Log.h
+index 29a65a972d..0d829bea17 100644
+--- a/Source/Core/Common/Logging/Log.h
++++ b/Source/Core/Common/Logging/Log.h
+@@ -98,7 +98,7 @@ void GenericLogFmt(LogLevel level, LogType type, const char* file, int line, con
+   static_assert(NumFields == sizeof...(args),
+                 "Unexpected number of replacement fields in format string; did you pass too few or "
+                 "too many arguments?");
+-  GenericLogFmtImpl(level, type, file, line, format, fmt::make_format_args(args...));
++  //GenericLogFmtImpl(level, type, file, line, format, fmt::make_format_args(args...));
+ }
+ }  // namespace Common::Log

@@ -45,6 +45,10 @@ Source4:        https://github.com/epezent/implot/archive/refs/tags/v0.14.tar.gz
 Source5:        https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.0.1.tar.gz#/VulkanMemoryAllocator-3.0.1.tar.gz
 
 Patch0:         https://github.com/dolphin-emu/dolphin/pull/11747/commits/6dad8f837285c32720efa8fcd28de4d197f27611.patch
+#Quick and dirty way to get it building with fmt 10, but it breaks logging:
+%if 0%{?fedora} > 38
+Patch1:         workaroundfmt10issues.patch
+%endif
 
 ###Bundled code ahoy, I've added my best guess for versions and upstream urls
 ##The following isn't in Fedora yet:
