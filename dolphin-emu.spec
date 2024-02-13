@@ -22,7 +22,7 @@
 
 Name:           dolphin-emu
 Version:        5.0.%{snapnumber}
-Release:        4%{?dist}
+Release:        4.rv64%{?dist}
 Summary:        GameCube / Wii / Triforce Emulator
 
 Url:            https://dolphin-emu.org/
@@ -129,7 +129,7 @@ BuildRequires:  hicolor-icon-theme
 BuildRequires:  /usr/bin/env
 
 #Only the following architectures are supported:
-ExclusiveArch:  x86_64 aarch64
+ExclusiveArch:  x86_64 aarch64 riscv64
 
 Requires:       hicolor-icon-theme
 Requires:       %{name}-data = %{version}-%{release}
